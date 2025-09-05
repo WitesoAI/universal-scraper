@@ -1,0 +1,22 @@
+# Core web scraping dependencies
+cloudscraper>=1.2.60
+selenium>=4.15.0
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+
+# Google Gemini API
+google-generativeai>=0.3.0
+
+# Utility libraries
+requests>=2.31.0
+urllib3>=1.26.0
+
+# Chrome WebDriver (optional - can be installed separately)
+webdriver-manager>=4.0.0
+
+# Data processing
+python-dateutil>=2.8.0
+
+# Optional: For better performance
+cchardet>=2.1.7
+html5lib>=1.1
