@@ -343,16 +343,40 @@ results = scraper.scrape_multiple_urls(urls, save_to_files=True, format='csv')
 ```
 
 ### CLI Usage
+
+**After installing the package:**
+
 ```bash
-# Default JSON output
+# Using the installed console script (Gemini only - legacy CLI)
+universal-scraper https://example.com/jobs --output jobs.json
+universal-scraper https://example.com/jobs --output jobs.csv --format csv
+universal-scraper --urls urls.txt --output-dir results --format csv
+```
+
+**Or run the module directly:**
+
+```bash
+# From cloned repository
 python main.py https://example.com/jobs --output jobs.json
-
-# CSV output
-python main.py https://example.com/jobs --output jobs.csv --format csv
-
-# Multiple URLs as CSV
+python main.py https://example.com/jobs --output jobs.csv --format csv  
 python main.py --urls urls.txt --output-dir results --format csv
 ```
+
+**⚠️ CLI Limitations**: 
+- Current CLI (`universal-scraper` command) only supports Gemini models
+- CLI uses legacy implementation without LiteLLM multi-provider support
+- For full feature access (OpenAI, Claude, etc.), use the Python API
+
+**💡 Recommended Usage**:
+```python
+# Full multi-provider support with Python API
+from universal_scraper import UniversalScraper
+
+scraper = UniversalScraper(api_key="your_key", model_name="gpt-4")  # or claude-3, etc.
+result = scraper.scrape_url("https://example.com", save_to_file=True)
+```
+
+**🚧 Future Plans**: CLI will be updated in v1.6.0 to support all AI providers
 
 ## 🧹 Smart HTML Cleaning
 
