@@ -21,6 +21,12 @@ from html_fetcher import HtmlFetcher
 from html_cleaner import HtmlCleaner
 from data_extractor import DataExtractor
 import google.generativeai as genai
+try:
+    from litellm import completion
+    LITELLM_AVAILABLE = True
+except ImportError:
+    LITELLM_AVAILABLE = False
+    completion = None
 
 
 class UniversalScraper:
@@ -38,18 +44,24 @@ class UniversalScraper:
         Initialize the Universal Scraper.
         
         Args:
-            api_key: Gemini API key (optional, can use GEMINI_API_KEY env var)
+            api_key: AI provider API key. For Gemini, can use GEMINI_API_KEY env var.
+                    For other providers, must be provided or set appropriate env vars.
             temp_dir: Directory for temporary files
             output_dir: Directory for output files
             log_level: Logging level
-            model_name: Gemini model name (default: 'gemini-2.0-flash-exp')
+            model_name: Model name. If None, defaults to 'gemini-2.5-flash' for Gemini.
+                       Examples: 'gemini-2.5-flash', 'gpt-4', 'claude-3-sonnet', etc.
         """
         self.setup_logging(log_level)
         self.logger = logging.getLogger(__name__)
         self.temp_dir = temp_dir
         self.output_dir = output_dir
         self.api_key = api_key
-        self.model_name = model_name
+        # Set default model based on API key detection if not provided
+        if model_name is None:
+            self.model_name = self._detect_default_model(api_key)
+        else:
+            self.model_name = model_name
         self.extraction_fields = ["company_name", "job_title", "apply_link", "salary_range"]
         
         # Create directories
@@ -112,14 +124,16 @@ class UniversalScraper:
     
     def set_model_name(self, model_name: str) -> None:
         """
-        Change the Gemini model name.
+        Change the AI model.
         
         Args:
-            model_name: Name of the Gemini model to use (e.g., 'gemini-pro', 'gemini-2.0-flash-exp')
+            model_name: Name of the AI model to use
+                       Examples: 'gemini-2.5-flash', 'gpt-4', 'claude-3-sonnet', etc.
         """
         self.model_name = model_name
         self.extractor.model_name = model_name
-        self.extractor.model = genai.GenerativeModel(model_name)
+        # Re-initialize the AI provider with new model
+        self.extractor._initialize_ai_provider(self.api_key)
         self.logger.info(f"Model changed to: {model_name}")
     
     def scrape_url(self, url: str, save_to_file: bool = False, 
@@ -235,6 +249,36 @@ class UniversalScraper:
             Number of entries removed
         """
         return self.extractor.cleanup_old_cache(days_old)
+    
+    def _detect_default_model(self, api_key: Optional[str]) -> str:
+        """
+        Detect default model based on API key pattern or environment variables.
+        
+        Args:
+            api_key: API key provided by user
+            
+        Returns:
+            Default model name
+        """
+        # Check for specific environment variables to detect provider
+        if os.getenv('OPENAI_API_KEY') and not api_key:
+            return 'gpt-4o-mini'
+        elif os.getenv('ANTHROPIC_API_KEY') and not api_key:
+            return 'claude-3-haiku-20240307'
+        elif os.getenv('GEMINI_API_KEY') or not api_key:
+            return 'gemini-2.5-flash'
+        
+        # If API key is provided, try to detect from key pattern
+        if api_key:
+            if api_key.startswith('sk-'):
+                return 'gpt-4o-mini'  # OpenAI pattern
+            elif api_key.startswith('sk-ant-'):
+                return 'claude-3-haiku-20240307'  # Anthropic pattern
+            elif 'AIza' in api_key:
+                return 'gemini-2.5-flash'  # Google AI Studio pattern
+        
+        # Default to Gemini if nothing else detected
+        return 'gemini-2.5-flash'
     
     def disable_cache(self) -> None:
         """Disable caching for this scraper instance"""
@@ -362,9 +406,9 @@ def scrape(url: str, api_key: str, fields: List[str], model_name: Optional[str] 
     
     Args:
         url: URL to scrape
-        api_key: Gemini API key
+        api_key: AI provider API key
         fields: List of fields to extract
-        model_name: Gemini model name (optional, default: 'gemini-2.0-flash-exp')
+        model_name: AI model name (optional, auto-detects based on api_key pattern)
         format: Output format - 'json' (default) or 'csv'
         
     Returns:
@@ -380,14 +424,14 @@ if __name__ == "__main__":
     # Example of how to use the module
     import os
     
-    # Initialize scraper
-    api_key = os.getenv("GEMINI_API_KEY")
+    # Initialize scraper - will auto-detect model based on available API keys
+    api_key = os.getenv("GEMINI_API_KEY") or os.getenv("OPENAI_API_KEY") or os.getenv("ANTHROPIC_API_KEY")
     if not api_key:
-        print("Please set GEMINI_API_KEY environment variable")
+        print("Please set one of: GEMINI_API_KEY, OPENAI_API_KEY, or ANTHROPIC_API_KEY environment variable")
         exit(1)
     
     # Initialize scraper with custom model (optional)
-    scraper = UniversalScraper(api_key=api_key, model_name="gemini-pro")
+    scraper = UniversalScraper(api_key=api_key, model_name="gemini-2.5-flash")
     
     # Set custom fields
     scraper.set_fields(["company_name", "job_title", "apply_link", "salary_range"])

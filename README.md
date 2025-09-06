@@ -12,11 +12,11 @@
 
 --------------------------------------------------------------------------
 
-A Python module for AI-powered web scraping with customizable field extraction using Google's Gemini AI.
+A Python module for AI-powered web scraping with customizable field extraction using multiple AI providers (Gemini, OpenAI, Anthropic, and more via LiteLLM).
 
 ## Features
 
-- 🤖 **AI-Powered Extraction**: Uses Google Gemini to intelligently extract structured data
+- 🤖 **Multi-Provider AI Support**: Uses Google Gemini by default, with support for OpenAI, Anthropic, and 100+ other models via LiteLLM
 - 🎯 **Customizable Fields**: Define exactly which fields you want to extract (e.g., company name, job title, salary)
 - 🚀 **Smart Caching**: Automatically caches extraction code based on HTML structure - saves 90%+ API tokens on repeat scraping
 - 🧹 **Smart HTML Cleaner**: Removes noise and reduces HTML by 91%+ - significantly cuts token usage for AI processing
@@ -59,10 +59,27 @@ pip install universal-scraper
 
 ### 1. Set up your API key
 
-Get a Gemini API key from [Google AI Studio](https://makersuite.google.com/app/apikey) and set it as an environment variable:
+**Option A: Use Gemini (Default - Recommended)**
+Get a Gemini API key from [Google AI Studio](https://makersuite.google.com/app/apikey):
 
 ```bash
 export GEMINI_API_KEY="your_gemini_api_key_here"
+```
+
+**Option B: Use OpenAI**
+```bash
+export OPENAI_API_KEY="your_openai_api_key_here"
+```
+
+**Option C: Use Anthropic Claude**
+```bash
+export ANTHROPIC_API_KEY="your_anthropic_api_key_here"
+```
+
+**Option D: Pass API key directly**
+```python
+# For any provider - just pass the API key directly
+scraper = UniversalScraper(api_key="your_api_key")
 ```
 
 ### 2. Basic Usage
@@ -70,11 +87,20 @@ export GEMINI_API_KEY="your_gemini_api_key_here"
 ```python
 from universal_scraper import UniversalScraper
 
-# Initialize the scraper (uses default model: gemini-2.5-flash)
+# Option 1: Auto-detect provider (uses Gemini by default)
 scraper = UniversalScraper(api_key="your_gemini_api_key")
 
-# Or initialize with a custom model
-scraper = UniversalScraper(api_key="your_gemini_api_key", model_name="gemini-pro")
+# Option 2: Specify Gemini model explicitly
+scraper = UniversalScraper(api_key="your_gemini_api_key", model_name="gemini-2.5-flash")
+
+# Option 3: Use OpenAI
+scraper = UniversalScraper(api_key="your_openai_api_key", model_name="gpt-4")
+
+# Option 4: Use Anthropic Claude
+scraper = UniversalScraper(api_key="your_anthropic_api_key", model_name="claude-3-sonnet-20240229")
+
+# Option 5: Use any other provider supported by LiteLLM
+scraper = UniversalScraper(api_key="your_api_key", model_name="llama-2-70b-chat")
 
 # Set the fields you want to extract
 scraper.set_fields([
@@ -121,12 +147,20 @@ data = scrape(
     format="csv"
 )
 
-# Quick scraping with custom model
+# Quick scraping with OpenAI
 data = scrape(
     url="https://example.com/jobs",
-    api_key="your_gemini_api_key",
+    api_key="your_openai_api_key",
     fields=["company_name", "job_title", "apply_link"],
-    model_name="gemini-1.5-pro"
+    model_name="gpt-4"
+)
+
+# Quick scraping with Anthropic Claude
+data = scrape(
+    url="https://example.com/jobs",
+    api_key="your_anthropic_api_key",
+    fields=["company_name", "job_title", "apply_link"],
+    model_name="claude-3-haiku-20240307"
 )
 
 print(data['data'])  # The extracted data
@@ -342,7 +376,7 @@ scraper = UniversalScraper(
     temp_dir="custom_temp",      # Custom temporary directory
     output_dir="custom_output",  # Custom output directory  
     log_level=logging.DEBUG,     # Enable debug logging
-    model_name="gemini-pro"      # Custom Gemini model
+    model_name="gpt-4"           # Custom model (OpenAI, Gemini, Claude, etc.)
 )
 
 # Configure for e-commerce scraping
@@ -357,7 +391,11 @@ scraper.set_fields([
 
 # Check and change model dynamically
 print(f"Current model: {scraper.get_model_name()}")
-scraper.set_model_name("gemini-1.5-pro")
+scraper.set_model_name("gpt-4")  # Switch to OpenAI
+print(f"Switched to: {scraper.get_model_name()}")
+
+# Or switch to Claude
+scraper.set_model_name("claude-3-sonnet-20240229")
 print(f"Switched to: {scraper.get_model_name()}")
 
 result = scraper.scrape_url("https://ecommerce-site.com", save_to_file=True)
@@ -372,11 +410,12 @@ result = scraper.scrape_url("https://ecommerce-site.com", save_to_file=True)
 UniversalScraper(api_key=None, temp_dir="temp", output_dir="output", log_level=logging.INFO, model_name=None)
 ```
 
-- `api_key`: Gemini API key (optional if GEMINI_API_KEY env var is set)
+- `api_key`: AI provider API key (auto-detects provider, or set specific env vars)
 - `temp_dir`: Directory for temporary files
 - `output_dir`: Directory for output files
 - `log_level`: Logging level
-- `model_name`: Gemini model name (default: 'gemini-2.5-flash')
+- `model_name`: AI model name (default: 'gemini-2.5-flash', supports 100+ models via LiteLLM)
+  - See [LiteLLM Providers](https://docs.litellm.ai/docs/providers) for complete model list and setup
 
 #### Methods
 
@@ -393,7 +432,9 @@ UniversalScraper(api_key=None, temp_dir="temp", output_dir="output", log_level=l
 scrape(url: str, api_key: str, fields: List[str], model_name: Optional[str] = None, format: str = 'json') -> Dict
 ```
 
-Quick scraping function for simple use cases.
+Quick scraping function for simple use cases. Auto-detects AI provider from API key pattern.
+
+**Note**: For model names and provider-specific setup, refer to the [LiteLLM Providers Documentation](https://docs.litellm.ai/docs/providers).
 
 ## Output Format
 
@@ -473,12 +514,81 @@ python test_module.py
 - `example_usage.py`: Comprehensive examples of different usage patterns
 - `test_module.py`: Test suite for the module
 
+## 🤖 Multi-Provider AI Support
+
+Universal Scraper now supports multiple AI providers through LiteLLM integration:
+
+### Supported Providers
+- **Google Gemini** (Default): `gemini-2.5-flash`, `gemini-1.5-pro`, etc.
+- **OpenAI**: `gpt-4`, `gpt-4-turbo`, `gpt-3.5-turbo`, etc.
+- **Anthropic**: `claude-3-opus-20240229`, `claude-3-sonnet-20240229`, `claude-3-haiku-20240307`
+- **100+ Other Models**: Via LiteLLM including Llama, PaLM, Cohere, and more
+
+**📚 For complete model names and provider setup**: See [LiteLLM Providers Documentation](https://docs.litellm.ai/docs/providers)
+
+### Usage Examples
+
+```python
+# Gemini (Default - Free tier available)
+scraper = UniversalScraper(api_key="your_gemini_key")
+# Auto-detects as gemini-2.5-flash
+
+# OpenAI
+scraper = UniversalScraper(api_key="sk-...", model_name="gpt-4")
+
+# Anthropic Claude
+scraper = UniversalScraper(api_key="sk-ant-...", model_name="claude-3-haiku-20240307")
+
+# Environment variable approach
+# Set GEMINI_API_KEY, OPENAI_API_KEY, or ANTHROPIC_API_KEY
+scraper = UniversalScraper()  # Auto-detects from env vars
+
+# Any other provider from LiteLLM (see link above for model names)
+scraper = UniversalScraper(api_key="your_api_key", model_name="llama-2-70b-chat")
+```
+
+### Model Configuration Guide
+
+**📋 Quick Reference for Popular Models:**
+```python
+# Gemini Models
+model_name="gemini-2.5-flash"        # Fast, efficient
+model_name="gemini-1.5-pro"          # More capable
+
+# OpenAI Models  
+model_name="gpt-4"                   # Most capable
+model_name="gpt-4o-mini"             # Fast, cost-effective
+model_name="gpt-3.5-turbo"           # Legacy but reliable
+
+# Anthropic Models
+model_name="claude-3-opus-20240229"      # Most capable
+model_name="claude-3-sonnet-20240229"    # Balanced
+model_name="claude-3-haiku-20240307"     # Fast, efficient
+
+# Other Popular Models (see LiteLLM docs for setup)
+model_name="llama-2-70b-chat"        # Meta Llama
+model_name="command-nightly"          # Cohere
+model_name="palm-2-chat-bison"        # Google PaLM
+```
+
+**🔗 Complete Model List**: Visit [LiteLLM Providers Documentation](https://docs.litellm.ai/docs/providers) for:
+- All available model names
+- Provider-specific API key setup
+- Environment variable configuration
+- Rate limits and pricing information
+
+### Model Auto-Detection
+If you don't specify a model, the scraper automatically selects:
+- **Gemini**: If `GEMINI_API_KEY` is set or API key contains "AIza"
+- **OpenAI**: If `OPENAI_API_KEY` is set or API key starts with "sk-"
+- **Anthropic**: If `ANTHROPIC_API_KEY` is set or API key starts with "sk-ant-"
+
 ## How It Works
 
 1. **HTML Fetching**: Uses cloudscraper to fetch HTML content, handling anti-bot measures
 2. **Smart HTML Cleaning**: Removes 91%+ of noise (scripts, ads, navigation, repeated structures, empty divs) while preserving data structure
 3. **Structure-Based Caching**: Creates structural hash and checks cache for existing extraction code
-4. **AI Code Generation**: Uses Google Gemini to generate custom BeautifulSoup code on cleaned HTML (only when not cached)
+4. **AI Code Generation**: Uses your chosen AI provider (Gemini, OpenAI, Claude, etc.) to generate custom BeautifulSoup code on cleaned HTML (only when not cached)
 5. **Code Execution**: Runs the cached/generated code on original HTML to extract ALL data items
 6. **JSON Output**: Returns complete, structured data with metadata and performance stats
 
@@ -486,9 +596,14 @@ python test_module.py
 
 ### Common Issues
 
-1. **API Key Error**: Make sure your Gemini API key is valid and set correctly
-2. **Empty Results**: The AI might need more specific field names or the page might not contain the expected data
-3. **Network Errors**: Some sites block scrapers - the tool uses cloudscraper to handle most cases
+1. **API Key Error**: Make sure your API key is valid and set correctly:
+   - Gemini: Set `GEMINI_API_KEY` or pass directly
+   - OpenAI: Set `OPENAI_API_KEY` or pass directly
+   - Anthropic: Set `ANTHROPIC_API_KEY` or pass directly
+2. **Model Not Found**: Ensure you're using the correct model name for your provider
+3. **Empty Results**: The AI might need more specific field names or the page might not contain the expected data
+4. **Network Errors**: Some sites block scrapers - the tool uses cloudscraper to handle most cases
+5. **Model Name Issues**: Check [LiteLLM Providers](https://docs.litellm.ai/docs/providers) for correct model names and setup instructions
 
 ### Debug Mode
 
@@ -547,6 +662,17 @@ Contributions of any kind welcome!
 MIT License - see LICENSE file for details.
 
 ## Changelog
+
+### v1.5.0 - Multi-Provider AI Support Release
+- 🚀 **NEW**: LiteLLM integration for 100+ AI models support
+- 🤖 **NEW**: Support for OpenAI GPT models (gpt-4, gpt-3.5-turbo, etc.)
+- 🧠 **NEW**: Support for Anthropic Claude models (claude-3-opus, claude-3-sonnet, claude-3-haiku)
+- 🔧 **NEW**: Automatic provider detection based on API key patterns
+- 🔧 **NEW**: Environment variable auto-detection (OPENAI_API_KEY, ANTHROPIC_API_KEY, GEMINI_API_KEY)
+- 📝 **FEATURE**: Flexible model switching with `set_model_name()` method
+- 🔄 **ENHANCEMENT**: Backward compatibility maintained - Gemini remains default
+- 📚 **DOCS**: Comprehensive multi-provider usage examples and setup guides
+- ⚡ **API**: Updated all methods to work seamlessly with any supported AI provider
 
 ### v1.4.0 - CSV Export Support Release
 - 📊 **NEW**: CSV export functionality with `format='csv'` parameter

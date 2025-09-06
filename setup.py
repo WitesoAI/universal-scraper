@@ -20,10 +20,10 @@ except FileNotFoundError:
 
 setup(
     name="universal-scraper",
-    version="1.4.0",
+    version="1.5.0",
     author="Ayushi Gupta & Pushpender Singh",
     author_email="aayushi.gupta0405@gmail.com",
-    description="AI-powered web scraping with customizable field extraction",
+    description="AI-powered web scraping with customizable field extraction using multiple AI providers",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/WitesoAI/universal-scraper",
@@ -55,6 +55,7 @@ setup(
     python_requires=">=3.7",
     install_requires=[
         "google-generativeai>=0.3.0",
+        "litellm>=1.70.0",
         "beautifulsoup4>=4.11.0",
         "requests>=2.28.0",
         "selenium>=4.0.0",
@@ -83,11 +84,17 @@ setup(
         "data extraction", 
         "beautifulsoup",
         "gemini",
+        "openai",
+        "anthropic",
+        "claude",
+        "gpt",
+        "litellm",
         "automation",
         "html parsing",
         "structured data",
         "caching",
-        "performance"
+        "performance",
+        "multi-provider"
     ],
     project_urls={
         "Bug Reports": "https://github.com/WitesoAI/universal-scraper/issues",

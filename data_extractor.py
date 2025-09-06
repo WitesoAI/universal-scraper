@@ -9,6 +9,12 @@ from urllib.parse import urlparse
 import google.generativeai as genai
 from bs4 import BeautifulSoup
 from code_cache import CodeCache
+try:
+    from litellm import completion
+    LITELLM_AVAILABLE = True
+except ImportError:
+    LITELLM_AVAILABLE = False
+    completion = None
 
 class DataExtractor:
     def __init__(self, api_key=None, temp_dir="temp", output_dir="output", model_name=None, enable_cache=True):
@@ -17,6 +23,7 @@ class DataExtractor:
         self.output_dir = output_dir
         self.extraction_codes_dir = os.path.join(temp_dir, "extraction_codes")
         self.enable_cache = enable_cache
+        self.api_key = api_key
         
         # Create directories
         os.makedirs(self.extraction_codes_dir, exist_ok=True)
@@ -32,20 +39,85 @@ class DataExtractor:
             self.code_cache = None
             self.logger.info("Code caching disabled")
         
-        # Configure Gemini API
-        if api_key:
-            genai.configure(api_key=api_key)
-        else:
-            api_key = os.getenv('GEMINI_API_KEY')
-            if not api_key:
-                raise ValueError("Gemini API key not provided. Set GEMINI_API_KEY environment variable or pass api_key parameter.")
-            genai.configure(api_key=api_key)
-        
         # Set model name with default fallback
         self.model_name = model_name or 'gemini-2.5-flash'
-        self.model = genai.GenerativeModel(self.model_name)
+        
+        # Initialize AI provider based on model name
+        self._initialize_ai_provider(api_key)
+        
         self.extraction_history = []
         self.logger.info(f"Initialized DataExtractor with model: {self.model_name}")
+    
+    def _initialize_ai_provider(self, api_key):
+        """Initialize AI provider based on model name"""
+        self.use_litellm = False
+        
+        # Check if it's a Gemini model
+        if self.model_name.startswith('gemini'):
+            # Use Google Gemini API directly
+            if api_key:
+                genai.configure(api_key=api_key)
+            else:
+                api_key = os.getenv('GEMINI_API_KEY')
+                if not api_key:
+                    raise ValueError("Gemini API key not provided. Set GEMINI_API_KEY environment variable or pass api_key parameter.")
+                genai.configure(api_key=api_key)
+            
+            self.model = genai.GenerativeModel(self.model_name)
+            self.logger.info(f"Using Google Gemini API with model: {self.model_name}")
+        else:
+            # Use LiteLLM for other providers
+            if not LITELLM_AVAILABLE:
+                raise ImportError("LiteLLM is required for non-Gemini models. Install with: pip install litellm")
+            
+            if not api_key:
+                # For testing purposes, allow initialization without API key
+                self.logger.warning("No API key provided for non-Gemini model - some operations will fail")
+            
+            self.use_litellm = True
+            self.model = None  # LiteLLM doesn't use model objects
+            self.logger.info(f"Using LiteLLM with model: {self.model_name}")
+    
+    def _detect_provider_from_model(self, model_name):
+        """Detect AI provider from model name"""
+        model_name_lower = model_name.lower()
+        
+        if model_name_lower.startswith('gemini'):
+            return 'gemini'
+        elif model_name_lower.startswith('gpt') or 'openai' in model_name_lower:
+            return 'openai'
+        elif model_name_lower.startswith('claude'):
+            return 'anthropic'
+        elif model_name_lower.startswith('llama'):
+            return 'ollama'
+        else:
+            return 'unknown'
+    
+    def _generate_content_with_ai(self, prompt):
+        """Generate content using appropriate AI provider"""
+        if self.use_litellm:
+            # Use LiteLLM for non-Gemini models
+            try:
+                response = completion(
+                    model=self.model_name,
+                    messages=[{"role": "user", "content": prompt}],
+                    api_key=self.api_key
+                )
+                return response.choices[0].message.content
+            except Exception as e:
+                self.logger.error(f"LiteLLM API error: {str(e)}")
+                raise
+        else:
+            # Use Google Gemini API
+            try:
+                response = self.model.generate_content(prompt)
+                if response and response.text:
+                    return response.text
+                else:
+                    raise Exception("No response from Gemini API")
+            except Exception as e:
+                self.logger.error(f"Gemini API error: {str(e)}")
+                raise
     
     def analyze_html_structure(self, html_content):
         """Analyze HTML to understand the data structure"""
@@ -153,12 +225,12 @@ Only return the Python code, no explanations.
 """
         
         try:
-            self.logger.info(f"Generating BeautifulSoup code with Gemini for fields: {extraction_fields}")
-            response = self.model.generate_content(prompt)
+            self.logger.info(f"Generating BeautifulSoup code with {self.model_name} for fields: {extraction_fields}")
+            response_text = self._generate_content_with_ai(prompt)
             
-            if response and response.text:
+            if response_text:
                 # Extract Python code from the response
-                code = response.text.strip()
+                code = response_text.strip()
                 
                 # Remove markdown code block markers if present
                 if code.startswith('```python'):
@@ -178,10 +250,10 @@ Only return the Python code, no explanations.
                 self.logger.info("Successfully generated BeautifulSoup code")
                 return code
             else:
-                raise Exception("No response from Gemini API")
+                raise Exception("No response from AI API")
                 
         except Exception as e:
-            self.logger.error(f"Error generating code with Gemini: {str(e)}")
+            self.logger.error(f"Error generating code with AI: {str(e)}")
             raise
     
     def execute_extraction_code(self, code, html_content):
