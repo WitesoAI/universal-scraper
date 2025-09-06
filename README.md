@@ -344,39 +344,52 @@ results = scraper.scrape_multiple_urls(urls, save_to_files=True, format='csv')
 
 ### CLI Usage
 
-**After installing the package:**
+**🎉 NEW in v1.6.0**: Full multi-provider CLI support!
 
 ```bash
-# Using the installed console script (Gemini only - legacy CLI)
+# Gemini (default) - auto-detects from environment
 universal-scraper https://example.com/jobs --output jobs.json
-universal-scraper https://example.com/jobs --output jobs.csv --format csv
-universal-scraper --urls urls.txt --output-dir results --format csv
+
+# OpenAI GPT models
+universal-scraper https://example.com/products --api-key YOUR_OPENAI_KEY --model gpt-4 --format csv
+
+# Anthropic Claude models  
+universal-scraper https://example.com/data --api-key YOUR_ANTHROPIC_KEY --model claude-3-haiku-20240307
+
+# Custom fields extraction
+universal-scraper https://example.com/listings --fields product_name product_price product_rating
+
+# Batch processing multiple URLs
+universal-scraper --urls urls.txt --output-dir results --format csv --model gpt-4o-mini
+
+# Verbose logging with any provider
+universal-scraper https://example.com --api-key YOUR_KEY --model gpt-4 --verbose
 ```
 
-**Or run the module directly:**
-
+**🔧 Advanced CLI Options:**
 ```bash
-# From cloned repository
-python main.py https://example.com/jobs --output jobs.json
-python main.py https://example.com/jobs --output jobs.csv --format csv  
-python main.py --urls urls.txt --output-dir results --format csv
+# Set custom extraction fields
+universal-scraper URL --fields title price description availability
+
+# Use environment variables (auto-detected)
+export OPENAI_API_KEY="your_key"
+universal-scraper URL --model gpt-4
+
+# Multiple output formats
+universal-scraper URL --format json    # Default
+universal-scraper URL --format csv     # Spreadsheet-ready
+
+# Batch processing
+echo -e "https://site1.com\nhttps://site2.com" > urls.txt
+universal-scraper --urls urls.txt --output-dir batch_results
 ```
 
-**⚠️ CLI Limitations**: 
-- Current CLI (`universal-scraper` command) only supports Gemini models
-- CLI uses legacy implementation without LiteLLM multi-provider support
-- For full feature access (OpenAI, Claude, etc.), use the Python API
+**🔗 Provider Support**: All 100+ models supported by LiteLLM work in CLI! See [LiteLLM Providers](https://docs.litellm.ai/docs/providers) for complete list.
 
-**💡 Recommended Usage**:
-```python
-# Full multi-provider support with Python API
-from universal_scraper import UniversalScraper
-
-scraper = UniversalScraper(api_key="your_key", model_name="gpt-4")  # or claude-3, etc.
-result = scraper.scrape_url("https://example.com", save_to_file=True)
+**📝 Development Usage** (from cloned repo):
+```bash
+python main.py https://example.com/jobs --api-key YOUR_KEY --model gpt-4
 ```
-
-**🚧 Future Plans**: CLI will be updated in v1.6.0 to support all AI providers
 
 ## 🧹 Smart HTML Cleaning
 
@@ -800,6 +813,17 @@ Contributions of any kind welcome!
 MIT License - see LICENSE file for details.
 
 ## Changelog
+
+### v1.6.0 - Enhanced CLI with Full Multi-Provider Support Release
+- 🚀 **NEW**: Complete CLI rewrite with LiteLLM multi-provider support
+- 🔧 **NEW**: CLI now supports OpenAI, Anthropic, and 100+ other AI models  
+- 📝 **NEW**: `--api-key` and `--model` CLI arguments for any provider
+- 🎯 **NEW**: `--fields` CLI argument for custom field extraction
+- 🔄 **ENHANCEMENT**: Dynamic help examples showing `universal-scraper` instead of `python main.py`
+- 📋 **ENHANCEMENT**: Better CLI error handling and user feedback
+- 🌍 **ENHANCEMENT**: Environment variable auto-detection in CLI
+- 🛠️ **API**: Backward compatible - existing CLI usage still works
+- ⚡ **PERFORMANCE**: CLI now uses same optimized pipeline as Python API
 
 ### v1.5.0 - Multi-Provider AI Support Release
 - 🚀 **NEW**: LiteLLM integration for 100+ AI models support
