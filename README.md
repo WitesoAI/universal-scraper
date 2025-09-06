@@ -83,6 +83,10 @@ Here's a real working example showing Universal Scraper in action with OpenAI GP
 2025-09-06 14:08:13 - data_extractor - INFO - Using LiteLLM with model: gpt-4o
 2025-09-06 14:08:13 - data_extractor - INFO - Initialized DataExtractor with model: gpt-4o
 
+>>> # Set fields for e-commerce laptop scraping
+>>> scraper.set_fields(["product_name", "product_price", "product_rating", "product_description", "availability"])
+2025-09-06 14:08:15 - universal_scraper - INFO - Extraction fields updated: ['product_name', 'product_price', 'product_rating', 'product_description', 'availability']
+
 >>> result = scraper.scrape_url("https://webscraper.io/test-sites/e-commerce/allinone/computers/laptops", save_to_file=True, format='csv')
 2025-09-06 14:08:20 - universal_scraper - INFO - Starting scraping for: https://webscraper.io/test-sites/e-commerce/allinone/computers/laptops
 2025-09-06 14:08:20 - html_fetcher - INFO - Starting to fetch HTML for: https://webscraper.io/test-sites/e-commerce/allinone/computers/laptops
@@ -100,7 +104,7 @@ Here's a real working example showing Universal Scraper in action with OpenAI GP
 2025-09-06 14:08:21 - html_cleaner - INFO - Reduction: 98.1%
 2025-09-06 14:08:21 - data_extractor - INFO - Using HTML separation: cleaned for code generation, original for execution
 2025-09-06 14:08:21 - code_cache - INFO - Cache MISS for https://webscraper.io/test-sites/e-commerce/allinone/computers/laptops
-2025-09-06 14:08:21 - data_extractor - INFO - Generating BeautifulSoup code with gpt-4o for fields: ['company_name', 'job_title', 'apply_link', 'salary_range']
+2025-09-06 14:08:21 - data_extractor - INFO - Generating BeautifulSoup code with gpt-4o for fields: ['product_name', 'product_price', 'product_rating', 'product_description', 'availability']
 2025-09-06 14:08:21 - LiteLLM - INFO - LiteLLM completion() model= gpt-4o; provider = openai
 2025-09-06 14:08:25 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
 2025-09-06 14:08:25 - code_cache - INFO - Code cached for https://webscraper.io/test-sites/e-commerce/allinone/computers/laptops
@@ -112,16 +116,17 @@ Here's a real working example showing Universal Scraper in action with OpenAI GP
 
 # ✨ Results: 117 laptop products extracted from 163KB HTML in ~5 seconds!
 # 🎯 98.1% HTML size reduction (163KB → 2.8KB for AI processing)  
-# 💾 Data automatically saved as CSV file with all laptop details
+# 💾 Data automatically saved as CSV with product_name, product_price, product_rating, etc.
 ```
 
 **🔥 What Just Happened:**
-1. **HTML Fetched** with anti-bot protection (163KB)
-2. **Smart Cleaning** reduced size by 98.1% (163KB → 2.8KB)
-3. **AI Generated** custom extraction code using GPT-4o
-4. **Code Cached** for future use (90% cost savings on re-runs)
-5. **117 Products Extracted** from original HTML with complete data
-6. **Saved as CSV** ready for analysis
+1. **Fields Configured** for e-commerce: product_name, product_price, product_rating, etc.
+2. **HTML Fetched** with anti-bot protection (163KB)
+3. **Smart Cleaning** reduced size by 98.1% (163KB → 2.8KB)
+4. **AI Generated** custom extraction code using GPT-4o for specified fields
+5. **Code Cached** for future use (90% cost savings on re-runs)
+6. **117 Laptop Products Extracted** from original HTML with complete data
+7. **Saved as CSV** ready for analysis with all specified product fields
 
 ## Features
 
