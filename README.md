@@ -128,6 +128,15 @@ Here's a real working example showing Universal Scraper in action with OpenAI GP
 6. **117 Laptop Products Extracted** from original HTML with complete data
 7. **Saved as CSV** ready for analysis with all specified product fields
 
+## How It Works
+
+1. **HTML Fetching**: Uses cloudscraper or selenium to fetch HTML content, handling anti-bot measures
+2. **Smart HTML Cleaning**: Removes 91%+ of noise (scripts, ads, navigation, repeated structures, empty divs) while preserving data structure
+3. **Structure-Based Caching**: Creates structural hash and checks cache for existing extraction code
+4. **AI Code Generation**: Uses your chosen AI provider (Gemini, OpenAI, Claude, etc.) to generate custom BeautifulSoup code on cleaned HTML (only when not cached)
+5. **Code Execution**: Runs the cached/generated code on original HTML to extract ALL data items
+6. **JSON Output**: Returns complete, structured data with metadata and performance stats
+
 ## Features
 
 - 🤖 **Multi-Provider AI Support**: Uses Google Gemini by default, with support for OpenAI, Anthropic, and 100+ other models via LiteLLM
@@ -428,34 +437,6 @@ The system uses a two-phase approach for optimal results:
 - **Phase 2**: Original HTML used for code execution to extract ALL data items
 - **Result**: Best of both worlds - efficient AI analysis + complete data extraction
 
-### Benefits
-- **Massive Token Reduction**: 91%+ smaller HTML means 91%+ fewer tokens to process
-- **Complete Data Extraction**: AI gets clean structure, execution gets all data (no data loss)
-- **Better AI Focus**: Clean HTML helps AI generate more accurate extraction code
-- **Faster Processing**: Less data to analyze means faster response times
-- **Cost Savings**: Fewer tokens = lower API costs per extraction
-- **Intelligent Deduplication**: Removes repetitive structures while preserving unique content
-
-### Real-World Example
-```bash
-# Example from job scraping site (URL redacted)
-2025-09-05 21:11:41 - html_cleaner - INFO - Starting HTML cleaning process...
-2025-09-05 21:11:41 - html_cleaner - INFO - Removed noise. Length: 102329
-2025-09-05 21:11:41 - html_cleaner - INFO - Removed headers/footers. Length: 85144
-2025-09-05 21:11:41 - html_cleaner - INFO - Focused on main content. Length: 85019
-2025-09-05 21:11:41 - html_cleaner - INFO - Found 20 similar structures, keeping 2, removing 18
-2025-09-05 21:11:41 - html_cleaner - INFO - Removed 10 repeating structure elements
-2025-09-05 21:11:41 - html_cleaner - INFO - Removed repeating structures. Length: 42710
-2025-09-05 21:11:41 - html_cleaner - INFO - Removed 341 empty div elements in 1 iterations
-2025-09-05 21:11:41 - html_cleaner - INFO - Removed empty divs. Length: 21319
-2025-09-05 21:11:41 - html_cleaner - INFO - HTML cleaning completed. Original: 257758, Final: 21319
-2025-09-05 21:11:41 - html_cleaner - INFO - Reduction: 91.7%
-2025-09-05 21:11:41 - data_extractor - INFO - Using HTML separation: cleaned for code generation, original for execution
-2025-09-05 21:11:41 - data_extractor - INFO - Successfully extracted data with 10 items
-```
-
-**Results**: 258KB → 21KB (91.7% reduction) for AI analysis, but all 10 job items extracted from original HTML!
-
 ## 🚀 Smart Caching (NEW!)
 
 **Saves 90%+ API tokens** by reusing extraction code for similar HTML structures:
@@ -652,14 +633,6 @@ scraper.set_fields([
 ])
 ```
 
-## Testing
-
-Run the test suite to verify everything works:
-
-```bash
-python test_module.py
-```
-
 ## Example Files
 
 - `example_usage.py`: Comprehensive examples of different usage patterns
@@ -733,15 +706,6 @@ If you don't specify a model, the scraper automatically selects:
 - **Gemini**: If `GEMINI_API_KEY` is set or API key contains "AIza"
 - **OpenAI**: If `OPENAI_API_KEY` is set or API key starts with "sk-"
 - **Anthropic**: If `ANTHROPIC_API_KEY` is set or API key starts with "sk-ant-"
-
-## How It Works
-
-1. **HTML Fetching**: Uses cloudscraper to fetch HTML content, handling anti-bot measures
-2. **Smart HTML Cleaning**: Removes 91%+ of noise (scripts, ads, navigation, repeated structures, empty divs) while preserving data structure
-3. **Structure-Based Caching**: Creates structural hash and checks cache for existing extraction code
-4. **AI Code Generation**: Uses your chosen AI provider (Gemini, OpenAI, Claude, etc.) to generate custom BeautifulSoup code on cleaned HTML (only when not cached)
-5. **Code Execution**: Runs the cached/generated code on original HTML to extract ALL data items
-6. **JSON Output**: Returns complete, structured data with metadata and performance stats
 
 ## Troubleshooting
 
