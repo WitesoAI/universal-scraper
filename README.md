@@ -334,12 +334,6 @@ result = scraper.scrape_url("https://example.com/jobs", save_to_file=True, forma
 - Perfect for Excel, Google Sheets, or pandas processing
 - Automatically handles varying field structures across items
 
-**Benefits of CSV:**
-- 📊 **Spreadsheet Ready**: Import directly into Excel/Google Sheets
-- 📈 **Data Analysis**: Perfect for pandas DataFrame processing
-- 🔄 **Universal Format**: Compatible with virtually all data tools
-- 📋 **Clean Structure**: Consistent column structure across all rows
-
 ### Multiple URLs with Format Choice
 ```python
 urls = ["https://site1.com", "https://site2.com", "https://site3.com"]
@@ -440,17 +434,6 @@ The system uses a two-phase approach for optimal results:
 ## 🚀 Smart Caching (NEW!)
 
 **Saves 90%+ API tokens** by reusing extraction code for similar HTML structures:
-
-### Key Benefits
-- **Token Savings**: Avoids regenerating BeautifulSoup code for similar pages
-- **Performance**: 5-10x faster scraping on cached structures  
-- **Cost Reduction**: Significant API cost savings for repeated scraping
-- **Automatic**: Works transparently - no code changes needed
-
-### How It Works
-- **Structural Hashing**: Creates hash based on HTML structure (not content)
-- **Smart Matching**: Reuses code when URL domain + structure + fields match
-- **Local SQLite DB**: Stores cached extraction codes permanently
 
 ### Cache Management
 ```python
