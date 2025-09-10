@@ -313,6 +313,31 @@ class HtmlCleaner:
         
         return soup
     
+    def limit_select_options(self, soup, max_options=2):
+        """Limit select tags to keep only a maximum number of option tags"""
+        select_tags = soup.find_all('select')
+        modified_count = 0
+        
+        for select_tag in select_tags:
+            option_tags = select_tag.find_all('option')
+            
+            if len(option_tags) > max_options:
+                # Keep only the first max_options option tags
+                options_to_keep = option_tags[:max_options]
+                options_to_remove = option_tags[max_options:]
+                
+                # Remove excess option tags
+                for option in options_to_remove:
+                    option.decompose()
+                
+                modified_count += 1
+                self.logger.debug(f"Limited select tag to {max_options} options (removed {len(options_to_remove)} options)")
+        
+        if modified_count > 0:
+            self.logger.info(f"Limited {modified_count} select tags to {max_options} option tags each")
+        
+        return soup
+
     def remove_empty_divs_recursive(self, soup):
         """Recursively remove empty div elements starting from innermost"""
         def has_meaningful_content(element):
@@ -425,7 +450,8 @@ class HtmlCleaner:
         2. Remove headers and footers
         3. Focus on main content
         4. Remove repeating structures (keep samples)
-        5. Remove empty div elements recursively
+        5. Limit select tags to 2 option tags
+        6. Remove empty div elements recursively
         """
         self.logger.info("Starting HTML cleaning process...")
         
@@ -460,17 +486,24 @@ class HtmlCleaner:
         if save_temp:
             self._save_cleaned_html(url, step4_html, "04_removed_repeating_structures")
         
-        # Step 5: Remove empty divs recursively
-        soup = self.remove_empty_divs_recursive(soup)
+        # Step 5: Limit select options to 2
+        soup = self.limit_select_options(soup, max_options=2)
         step5_html = str(soup)
-        self.logger.info(f"Removed empty divs. Length: {len(step5_html)}")
+        self.logger.info(f"Limited select options. Length: {len(step5_html)}")
         if save_temp:
-            self._save_cleaned_html(url, step5_html, "05_removed_empty_divs")
+            self._save_cleaned_html(url, step5_html, "05_limited_select_options")
+        
+        # Step 6: Remove empty divs recursively
+        soup = self.remove_empty_divs_recursive(soup)
+        step6_html = str(soup)
+        self.logger.info(f"Removed empty divs. Length: {len(step6_html)}")
+        if save_temp:
+            self._save_cleaned_html(url, step6_html, "06_removed_empty_divs")
         
         final_html = str(soup)
         final_length = len(final_html)
         if save_temp:
-            self._save_cleaned_html(url, final_html, "06_final_cleaned")
+            self._save_cleaned_html(url, final_html, "07_final_cleaned")
         
         self.logger.info(f"HTML cleaning completed. Original: {original_length}, Final: {final_length}")
         self.logger.info(f"Reduction: {((original_length - final_length) / original_length * 100):.1f}%")

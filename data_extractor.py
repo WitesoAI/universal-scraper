@@ -183,23 +183,42 @@ class DataExtractor:
         # Create field descriptions for the prompt
         field_descriptions = ", ".join(extraction_fields)
         
-        # Prepare the prompt for Gemini
+        # Prepare the prompt for the AI model
         prompt = f"""
 You are an expert web scraper. Analyze the following HTML content and generate a Python function using BeautifulSoup that extracts structured data.
 
-HTML Content 
-{html_content}
+IMPORTANT CONTEXT: The HTML provided has been intelligently cleaned and reduced:
+- Repeated structures have been sampled (only 2 samples shown from groups of 3+ similar elements)
+- Empty divs, scripts, styles, ads, and navigation elements have been removed
+- The final extraction will run on the FULL original HTML with ALL items
+- Your code must be designed to handle the complete dataset, not just the samples shown
 
 Requirements:
 1. Create a function named 'extract_data(html_content)' that takes HTML string as input
 2. Return structured data as a JSON-serializable dictionary/list
 3. Only extract the following fields: {field_descriptions}
-4. Handle edge cases and missing elements gracefully
+4. Handle edge cases and missing elements gracefully using try-except blocks
 5. Use descriptive field names in the output that match the requested fields
 6. Group related data logically
 7. Always return the same structure even if some fields are empty
-8. Include error handling
+8. Include comprehensive error handling
 9. For each item/record, include all requested fields even if some are null/empty
+10. **Design for scalability** - your selectors must work for hundreds/thousands of similar items
+11. **Use robust selectors** that will work across all instances, not just the 2 samples shown
+12. **Avoid hardcoded indices** - use class names, attributes, and structural patterns instead
+
+Selector Best Practices:
+- Use CSS selectors or find_all() methods that capture ALL matching elements
+- Prefer class-based selectors over position-based ones
+- Test selectors that work for recurring patterns, not just individual samples
+- Use broad selectors like `soup.find_all('div', class_='item-class')` to catch all items
+- Handle variations in HTML structure within the same element type
+
+Error Handling Requirements:
+- Wrap individual field extractions in try-except blocks
+- Provide meaningful default values for missing fields
+- Continue processing other items even if one fails
+- Log specific errors without stopping execution
 
 The function should follow this template:
 ```python
@@ -221,7 +240,10 @@ def extract_data(html_content):
         return []
 ```
 
+Remember: The HTML shown contains only SAMPLES of repeated elements. Your selectors must work for ALL instances in the full HTML. Focus on patterns and classes that will scale to the complete dataset.
 Only return the Python code, no explanations.
+HTML Content:
+```{html_content}```
 """
         
         try:
