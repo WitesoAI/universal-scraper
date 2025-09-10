@@ -396,7 +396,7 @@ python main.py https://example.com/jobs --api-key YOUR_KEY --model gpt-4
 
 ## 🧹 Smart HTML Cleaning
 
-**Reduces HTML size by 91%+** before sending to AI - dramatically cuts token usage:
+**Reduces HTML size by 98%+** before sending to AI - dramatically cuts token usage:
 
 ### What Gets Removed
 - **Scripts & Styles**: JavaScript, CSS, and style blocks
@@ -760,6 +760,13 @@ Contributions of any kind welcome!
 MIT License - see LICENSE file for details.
 
 ## Changelog
+
+### v1.7.0 - HTML Form Optimization Release
+- 🔧 **NEW**: Select options limiting - automatically reduces select tags to maximum 2 options
+- 🧹 **ENHANCEMENT**: Improved HTML cleaning with form element optimization
+- 📦 **OPTIMIZATION**: Further reduces HTML size by removing excessive form options
+- 🎯 **FEATURE**: Smart form simplification preserves essential functionality while reducing complexity
+- ⚡ **PERFORMANCE**: Reduced token usage in AI processing through cleaner HTML forms
 
 ### v1.6.0 - Enhanced CLI with Full Multi-Provider Support Release
 - 🚀 **NEW**: Complete CLI rewrite with LiteLLM multi-provider support

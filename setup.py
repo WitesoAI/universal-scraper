@@ -20,7 +20,7 @@ except FileNotFoundError:
 
 setup(
     name="universal-scraper",
-    version="1.6.0",
+    version="1.7.0",
     author="Ayushi Gupta & Pushpender Singh",
     author_email="aayushi.gupta0405@gmail.com",
     description="AI-powered web scraping with customizable field extraction using multiple AI providers",
