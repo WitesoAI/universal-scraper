@@ -20,6 +20,3 @@ webdriver-manager>=4.0.0
 # Data processing
 python-dateutil>=2.8.0
 
-# Optional: For better performance
-cchardet>=2.1.7
-html5lib>=1.1

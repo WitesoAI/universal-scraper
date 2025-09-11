@@ -242,7 +242,7 @@ pip install universal-scraper
 
    Or install manually:
    ```bash
-   pip install google-generativeai beautifulsoup4 requests selenium lxml html5lib fake-useragent
+   pip install google-generativeai beautifulsoup4 requests selenium lxml fake-useragent
    ```
 
 3. **Install the module**:

@@ -60,7 +60,6 @@ setup(
         "requests>=2.28.0",
         "selenium>=4.0.0",
         "lxml>=4.9.0",
-        "html5lib>=1.1",
         "fake-useragent>=1.2.0",
         "cloudscraper>=1.2.0",
     ],
