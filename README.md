@@ -424,13 +424,6 @@ The cleaner now intelligently removes empty div elements:
 
 **Example**: Removes empty animation placeholders like `<div class="animate-pulse"></div>` while preserving divs containing actual content.
 
-### HTML Separation for Execution (NEW!)
-The system uses a two-phase approach for optimal results:
-
-- **Phase 1**: Cleaned HTML (91% smaller) sent to AI for BeautifulSoup code generation
-- **Phase 2**: Original HTML used for code execution to extract ALL data items
-- **Result**: Best of both worlds - efficient AI analysis + complete data extraction
-
 ## 🚀 Smart Caching (NEW!)
 
 **Saves 90%+ API tokens** by reusing extraction code for similar HTML structures:
