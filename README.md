@@ -752,7 +752,7 @@ See [ROADMAP.md](ROADMAP.md) for planned features and improvements.
 2. Create a feature branch
 3. Make your changes
 4. Run `pytest` to run testcases
-5. Test PEP Standard: `
+5. Test PEP Standard: 
 
 ```
 flake8 universal_scraper/ --count --select=E9,F63,F7,F82 --show-source --statistics
