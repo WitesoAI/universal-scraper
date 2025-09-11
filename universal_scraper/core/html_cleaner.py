@@ -296,6 +296,25 @@ class HtmlCleaner:
 
         return soup
 
+    def remove_inline_svg_images(self, soup):
+        """
+        Remove inline SVG images to reduce HTML size and noise.
+        SVG elements often contain complex graphics that don't contribute to
+        text-based data extraction.
+        """
+        # Remove SVG elements
+        svg_count = 0
+        for svg_element in soup.find_all("svg"):
+            svg_element.decompose()
+            svg_count += 1
+
+        if svg_count > 0:
+            self.logger.info(
+                f"Removed {svg_count} Inline SVG image elements."
+            )
+
+        return soup
+
     def remove_header_footer(self, soup):
         """Remove header and footer elements"""
         # Remove by semantic tags
@@ -1020,13 +1039,15 @@ class HtmlCleaner:
         """
         Main method to clean HTML content:
         1. Remove noise (scripts, styles, comments)
-        2. Remove headers and footers
-        3. Focus on main content
-        4. Remove repeating structures (keep samples)
-        5. Limit select tags to 2 option tags
-        6. Remove empty div elements recursively
-        7. Remove non-essential HTML attributes
-        8. Remove whitespace and newlines between consecutive tags
+        2. Remove inline SVG images and image elements
+        3. Remove headers and footers
+        4. Focus on main content
+        5. Remove repeating structures (keep samples)
+        6. Limit select tags to 2 option tags
+        7. Remove empty div elements recursively
+        8. Remove non-essential HTML attributes
+        9. Remove whitespace and newlines between consecutive tags
+        10. Remove empty div elements recursively (again after compression)
         """
         self.logger.info("Starting HTML cleaning process...")
 
@@ -1040,67 +1061,88 @@ class HtmlCleaner:
         if save_temp:
             self._save_cleaned_html(url, step1_html, "01_removed_noise")
 
-        # Step 2: Remove headers and footers
-        soup = self.remove_header_footer(soup)
+        # Step 2: Remove inline SVG images and image elements
+        soup = self.remove_inline_svg_images(soup)
         step2_html = str(soup)
-        self.logger.info(f"Removed headers/footers. Length: {len(step2_html)}")
+        self.logger.info(f"Removed SVG/images. Length: {len(step2_html)}")
         if save_temp:
-            self._save_cleaned_html(
-                url, step2_html, "02_removed_header_footer"
-            )
+            self._save_cleaned_html(url, step2_html, "02_removed_svg_images")
 
-        # Step 3: Focus on main content
-        soup = self.focus_on_main_content(soup)
+        # Step 3: Remove headers and footers
+        soup = self.remove_header_footer(soup)
         step3_html = str(soup)
-        self.logger.info(f"Focused on main content. Length: {len(step3_html)}")
+        self.logger.info(f"Removed headers/footers. Length: {len(step3_html)}")
         if save_temp:
-            self._save_cleaned_html(url, step3_html, "03_main_content")
+            self._save_cleaned_html(
+                url, step3_html, "03_removed_header_footer"
+            )
 
-        # Step 4: Remove repeating structures (keep samples)
-        soup = self.remove_repeating_structures(soup, min_keep=2, min_total=3)
+        # Step 4: Focus on main content
+        soup = self.focus_on_main_content(soup)
         step4_html = str(soup)
-        self.logger.info(
-            f"Removed repeating structures. Length: {len(step4_html)}"
-        )
+        self.logger.info(f"Focused on main content. Length: {len(step4_html)}")
         if save_temp:
-            self._save_cleaned_html(
-                url, step4_html, "04_removed_repeating_structures"
-            )
+            self._save_cleaned_html(url, step4_html, "04_main_content")
 
-        # Step 5: Limit select options to 2
-        soup = self.limit_select_options(soup, max_options=2)
+        # Step 5: Remove repeating structures (keep samples)
+        soup = self.remove_repeating_structures(soup, min_keep=2, min_total=3)
         step5_html = str(soup)
-        self.logger.info(f"Limited select options. Length: {len(step5_html)}")
-        if save_temp:
-            self._save_cleaned_html(
-                url, step5_html, "05_limited_select_options"
-            )
-
-        # Step 6: Remove empty divs recursively
-        soup = self.remove_empty_divs_recursive(soup)
-        step6_html = str(soup)
-        self.logger.info(f"Removed empty divs. Length: {len(step6_html)}")
-        if save_temp:
-            self._save_cleaned_html(url, step6_html, "06_removed_empty_divs")
-
-        # Step 7: Remove non-essential HTML attributes
-        soup = self.remove_non_essential_attributes(soup)
-        step7_html = str(soup)
         self.logger.info(
-            f"Removed non-essential attributes. Length: {len(step7_html)}"
+            f"Removed repeating structures. Length: {len(step5_html)}"
         )
         if save_temp:
-            self._save_cleaned_html(url, step7_html, "07_removed_attributes")
+            self._save_cleaned_html(
+                url, step5_html, "05_removed_repeating_structures"
+            )
 
-        # Step 8: Remove whitespace between consecutive tags
-        step8_html = self.remove_whitespace_between_tags(step7_html)
+        # Step 6: Limit select options to 2
+        soup = self.limit_select_options(soup, max_options=2)
+        step6_html = str(soup)
+        self.logger.info(f"Limited select options. Length: {len(step6_html)}")
         if save_temp:
-            self._save_cleaned_html(url, step8_html, "08_removed_whitespace")
+            self._save_cleaned_html(
+                url, step6_html, "06_limited_select_options"
+            )
 
-        final_html = step8_html
+        # Step 7: Remove empty divs recursively
+        soup = self.remove_empty_divs_recursive(soup)
+        step7_html = str(soup)
+        self.logger.info(f"Removed empty divs. Length: {len(step7_html)}")
+        if save_temp:
+            self._save_cleaned_html(url, step7_html, "07_removed_empty_divs")
+
+        # Step 8: Remove non-essential HTML attributes
+        soup = self.remove_non_essential_attributes(soup)
+        step8_html = str(soup)
+        self.logger.info(
+            f"Removed non-essential attributes. Length: {len(step8_html)}"
+        )
+        if save_temp:
+            self._save_cleaned_html(url, step8_html, "08_removed_attributes")
+
+        # Step 9: Remove whitespace between consecutive tags
+        step9_html = self.remove_whitespace_between_tags(step8_html)
+        if save_temp:
+            self._save_cleaned_html(url, step9_html, "09_removed_whitespace")
+
+        # Step 10: Remove empty divs again after compression
+        # (whitespace removal might create new empty divs)
+        soup = BeautifulSoup(step9_html, "html.parser")
+        soup = self.remove_empty_divs_recursive(soup)
+        step10_html = str(soup)
+        self.logger.info(
+            f"Removed empty divs (post-compression). "
+            f"Length: {len(step10_html)}"
+        )
+        if save_temp:
+            self._save_cleaned_html(
+                url, step10_html, "10_removed_empty_divs_post_compression"
+            )
+
+        final_html = step10_html
         final_length = len(final_html)
         if save_temp:
-            self._save_cleaned_html(url, final_html, "09_final_cleaned")
+            self._save_cleaned_html(url, final_html, "11_final_cleaned")
 
         self.logger.info(
             f"HTML cleaning completed. "
