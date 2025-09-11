@@ -455,7 +455,7 @@ class HtmlCleaner:
             return "|".join(structure_parts)
 
         structure_str = get_element_tree_structure(element)
-        return hashlib.md5(structure_str.encode()).hexdigest()[:16]
+        return hashlib.sha256(structure_str.encode()).hexdigest()[:16]
 
     def find_repeating_structures(
         self, soup, min_keep=2, min_total=3, similarity_threshold=0.85
