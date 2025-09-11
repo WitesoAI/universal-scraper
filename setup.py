@@ -52,7 +52,7 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Topic :: Text Processing :: Markup :: HTML",
     ],
-    python_requires=">=3.7",
+    python_requires=">=3.9",
     install_requires=[
         "google-generativeai>=0.3.0",
         "litellm>=1.70.0",
