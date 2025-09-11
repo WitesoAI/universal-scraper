@@ -20,8 +20,15 @@ class HtmlFetcher:
         os.makedirs(self.raw_html_dir, exist_ok=True)
 
         self.headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+            "User-Agent": (
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/91.0.4472.124 Safari/537.36"
+            ),
+            "Accept": (
+                "text/html,application/xhtml+xml,application/xml;"
+                "q=0.9,image/webp,*/*;q=0.8"
+            ),
             "Accept-Language": "en-US,en;q=0.5",
             "Accept-Encoding": "gzip, deflate",
             "Connection": "keep-alive",
@@ -41,7 +48,8 @@ class HtmlFetcher:
             response.raise_for_status()
 
             self.logger.info(
-                f"Successfully fetched content with cloudscraper. Length: {len(response.text)}"
+                f"Successfully fetched content with cloudscraper. "
+                f"Length: {len(response.text)}"
             )
             return response.text
 
@@ -76,7 +84,8 @@ class HtmlFetcher:
 
             driver = webdriver.Chrome(options=chrome_options)
             driver.execute_script(
-                "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"
+                "Object.defineProperty(navigator, 'webdriver', "
+                "{get: () => undefined})"
             )
 
             self.logger.info(f"Fetching {url} with selenium...")
@@ -92,7 +101,8 @@ class HtmlFetcher:
 
             html_content = driver.page_source
             self.logger.info(
-                f"Successfully fetched content with selenium. Length: {len(html_content)}"
+                f"Successfully fetched content with selenium. "
+                f"Length: {len(html_content)}"
             )
 
             return html_content
@@ -130,7 +140,8 @@ class HtmlFetcher:
 
     def fetch_html(self, url, save_temp=True):
         """
-        Try to fetch HTML using both methods, return the first successful result
+        Try to fetch HTML using both methods, return the first successful
+        result
         """
         self.logger.info(f"Starting to fetch HTML for: {url}")
 
@@ -144,7 +155,8 @@ class HtmlFetcher:
 
         # Method 2: Fallback to selenium
         self.logger.info(
-            "Cloudscraper failed or returned insufficient content, trying selenium..."
+            "Cloudscraper failed or returned insufficient content, "
+            "trying selenium..."
         )
         html = self.fetch_with_selenium(url)
         if html and len(html) > 100:
@@ -156,5 +168,6 @@ class HtmlFetcher:
         # Both methods failed
         self.logger.error(f"Both methods failed to fetch HTML for {url}")
         raise Exception(
-            f"Failed to fetch HTML content for {url} using both cloudscraper and selenium"
+            f"Failed to fetch HTML content for {url} using both "
+            f"cloudscraper and selenium"
         )

@@ -399,7 +399,8 @@ class HtmlCleaner:
                 text_signatures = []
                 for elem in elements:
                     text = elem.get_text(strip=True)
-                    # Create a pattern from text structure (word count, numbers, etc.)
+                    # Create a pattern from text structure
+                    # (word count, numbers, etc.)
                     words = len(text.split())
                     numbers = len(re.findall(r"\d+", text))
                     text_signatures.append(f"words:{words},numbers:{numbers}")
@@ -414,7 +415,10 @@ class HtmlCleaner:
         return duplicate_groups
 
     def get_structural_hash(self, element):
-        """Generate a structural hash for an element based on its DOM structure"""
+        """
+        Generate a structural hash for an element based on its
+        DOM structure
+        """
 
         def get_element_tree_structure(elem, max_depth=3, current_depth=0):
             """Recursively build a structure representation"""
@@ -462,8 +466,10 @@ class HtmlCleaner:
         Args:
             soup: BeautifulSoup object
             min_keep: Minimum number of similar elements to keep (default: 2)
-            min_total: Minimum total occurrences to consider as repeating (default: 3)
-            similarity_threshold: Structure similarity threshold (0.0-1.0, default: 0.85)
+            min_total: Minimum total occurrences to consider as
+                       repeating (default: 3)
+            similarity_threshold: Structure similarity threshold
+                                  (0.0-1.0, default: 0.85)
 
         Returns:
             List of elements to remove
@@ -574,7 +580,9 @@ class HtmlCleaner:
                 elements_to_remove.extend(elements_to_remove_from_group)
 
                 self.logger.info(
-                    f"Found {len(elements)} similar structures, keeping {len(elements_to_keep)}, removing {len(elements_to_remove_from_group)}"
+                    f"Found {len(elements)} similar structures, "
+                    f"keeping {len(elements_to_keep)}, "
+                    f"removing {len(elements_to_remove_from_group)}"
                 )
 
         return elements_to_remove
@@ -657,12 +665,14 @@ class HtmlCleaner:
 
                 modified_count += 1
                 self.logger.debug(
-                    f"Limited select tag to {max_options} options (removed {len(options_to_remove)} options)"
+                    f"Limited select tag to {max_options} options "
+                    f"(removed {len(options_to_remove)} options)"
                 )
 
         if modified_count > 0:
             self.logger.info(
-                f"Limited {modified_count} select tags to {max_options} option tags each"
+                f"Limited {modified_count} select tags to "
+                f"{max_options} option tags each"
             )
 
         return soup
@@ -680,7 +690,8 @@ class HtmlCleaner:
             if text:
                 return True
 
-            # Check for meaningful attributes that indicate the div serves a purpose
+            # Check for meaningful attributes that indicate the div
+            # serves a purpose
             # (like images, inputs, or other interactive elements)
             meaningful_tags = [
                 "img",
@@ -698,7 +709,8 @@ class HtmlCleaner:
                 if element.find(tag):
                     return True
 
-            # Check for data attributes or specific classes that might indicate functionality
+            # Check for data attributes or specific classes that
+            # might indicate functionality
             if element.get("data-") or element.get("id"):
                 # Be more selective - only keep if it seems functional
                 attrs = element.attrs
@@ -722,7 +734,8 @@ class HtmlCleaner:
             # Find all div elements, starting from deepest nesting
             all_divs = soup.find_all("div")
 
-            # Sort by nesting depth (deepest first) to handle innermost divs first
+            # Sort by nesting depth (deepest first) to handle
+            # innermost divs first
             divs_by_depth = []
             for div in all_divs:
                 depth = len(list(div.parents))
@@ -739,7 +752,8 @@ class HtmlCleaner:
                     # Check if removing this div would break structure
                     parent = div.parent
                     if parent and parent.name in ["html", "head", "body"]:
-                        # Don't remove direct children of important structural elements
+                        # Don't remove direct children of important
+                        # structural elements
                         # unless they're completely empty
                         if not div.get_text(strip=True) and not div.find_all():
                             div.decompose()
@@ -765,14 +779,17 @@ class HtmlCleaner:
             iteration += 1
 
         self.logger.info(
-            f"Removed {total_removed} empty div elements in {iteration} iterations"
+            f"Removed {total_removed} empty div elements "
+            f"in {iteration} iterations"
         )
         return soup
 
     def remove_whitespace_between_tags(self, html_content):
         """
-        Remove whitespace and newlines only between consecutive tags while preserving
-        text content within tags. This compresses the HTML size without affecting
+        Remove whitespace and newlines only between consecutive tags
+        while preserving
+        text content within tags. This compresses the HTML size
+        without affecting
         the actual content.
 
         Args:
@@ -785,11 +802,13 @@ class HtmlCleaner:
 
         # Use regex to remove whitespace between closing tag and opening tag
         # Pattern explanation:
-        # (>\s+<) matches: > followed by one or more whitespace chars followed by <
+        # (>\s+<) matches: > followed by one or more whitespace
+        # chars followed by <
         # Replace with: ><
         cleaned_html = re.sub(r">\s+<", "><", html_content)
 
-        # Also remove leading/trailing whitespace from lines but preserve content structure
+        # Also remove leading/trailing whitespace from lines
+        # but preserve content structure
         lines = cleaned_html.split("\n")
         cleaned_lines = []
 
@@ -809,7 +828,8 @@ class HtmlCleaner:
         )
 
         self.logger.info(
-            f"Removed whitespace between tags. Length: {original_length} → {final_length} "
+            f"Removed whitespace between tags. "
+            f"Length: {original_length} → {final_length} "
             f"({reduction_percent:.1f}% reduction)"
         )
 
@@ -819,7 +839,8 @@ class HtmlCleaner:
         """
         Remove non-essential HTML attributes that don't affect data extraction.
 
-        This method removes styling, tracking, testing, and other non-content attributes
+        This method removes styling, tracking, testing, and other
+        non-content attributes
         while preserving all attributes that might contain extractable data.
 
         Args:
@@ -868,10 +889,12 @@ class HtmlCleaner:
 
                 # Special handling for data attributes - be more selective
                 if attr_name.startswith("data-"):
-                    # Check if it's a data attribute that might contain useful content
+                    # Check if it's a data attribute that might
+                    # contain useful content
                     data_key = attr_name[5:]  # Remove 'data-' prefix
 
-                    # Keep data attributes that are likely to contain extractable content
+                    # Keep data attributes that are likely to
+                    # contain extractable content
                     useful_data_patterns = [
                         "price",
                         "value",
@@ -967,7 +990,10 @@ class HtmlCleaner:
         return soup
 
     def _save_cleaned_html(self, url, html_content, stage):
-        """Save cleaned HTML at different stages to temp folder for debugging"""
+        """
+        Save cleaned HTML at different stages to temp folder
+        for debugging
+        """
         try:
             if url:
                 parsed_url = urlparse(url)
@@ -1077,10 +1103,12 @@ class HtmlCleaner:
             self._save_cleaned_html(url, final_html, "09_final_cleaned")
 
         self.logger.info(
-            f"HTML cleaning completed. Original: {original_length}, Final: {final_length}"
+            f"HTML cleaning completed. "
+            f"Original: {original_length}, Final: {final_length}"
         )
-        self.logger.info(
-            f"Reduction: {((original_length - final_length) / original_length * 100):.1f}%"
+        reduction_percent = (
+            (original_length - final_length) / original_length * 100
         )
+        self.logger.info(f"Reduction: {reduction_percent:.1f}%")
 
         return final_html

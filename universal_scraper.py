@@ -6,7 +6,9 @@ Usage:
     from universal_scraper import UniversalScraper
 
     scraper = UniversalScraper(api_key="your_gemini_api_key")
-    scraper.set_fields(["company_name", "job_title", "apply_link", "salary_range"])
+    scraper.set_fields(
+        ["company_name", "job_title", "apply_link", "salary_range"]
+    )
     data = scraper.scrape_url("https://example.com/jobs")
 """
 
@@ -48,13 +50,17 @@ class UniversalScraper:
         Initialize the Universal Scraper.
 
         Args:
-            api_key: AI provider API key. For Gemini, can use GEMINI_API_KEY env var.
-                    For other providers, must be provided or set appropriate env vars.
+            api_key: AI provider API key. For Gemini, can use
+                    GEMINI_API_KEY env var.
+                    For other providers, must be provided or set
+                    appropriate env vars.
             temp_dir: Directory for temporary files
             output_dir: Directory for output files
             log_level: Logging level
-            model_name: Model name. If None, defaults to 'gemini-2.5-flash' for Gemini.
-                       Examples: 'gemini-2.5-flash', 'gpt-4', 'claude-3-sonnet', etc.
+            model_name: Model name. If None, defaults to
+                       'gemini-2.5-flash' for Gemini.
+                       Examples: 'gemini-2.5-flash', 'gpt-4',
+                       'claude-3-sonnet', etc.
         """
         self.setup_logging(log_level)
         self.logger = logging.getLogger(__name__)
@@ -104,7 +110,8 @@ class UniversalScraper:
         Set the fields to extract from web pages.
 
         Args:
-            fields: List of field names to extract (e.g., ["company_name", "job_title"])
+            fields: List of field names to extract
+                   (e.g., ["company_name", "job_title"])
         """
         if not fields or not isinstance(fields, list):
             raise ValueError("Fields must be a non-empty list")
@@ -137,7 +144,8 @@ class UniversalScraper:
 
         Args:
             model_name: Name of the AI model to use
-                       Examples: 'gemini-2.5-flash', 'gpt-4', 'claude-3-sonnet', etc.
+                       Examples: 'gemini-2.5-flash', 'gpt-4',
+                       'claude-3-sonnet', etc.
         """
         self.model_name = model_name
         self.extractor.model_name = model_name
@@ -176,7 +184,8 @@ class UniversalScraper:
             # Step 2: Clean HTML (for AI analysis)
             cleaned_html = self.cleaner.clean_html(raw_html, url=url)
 
-            # Step 3: Extract structured data (use cleaned HTML for code generation, original for execution)
+            # Step 3: Extract structured data (use cleaned HTML for code
+            # generation, original for execution)
             extracted_data = self.extractor.extract_data_with_separation(
                 cleaned_html, raw_html, url
             )
@@ -391,14 +400,16 @@ class UniversalScraper:
             # Write data rows
             for item in data_list:
                 if isinstance(item, dict):
-                    # Ensure all fields are present, fill missing with empty string
+                    # Ensure all fields are present, fill missing with
+                    # empty string
                     row = {field: item.get(field, "") for field in fieldnames}
                     writer.writerow(row)
 
 
 class CustomDataExtractor(DataExtractor):
     """
-    Extended DataExtractor that supports custom field configuration with caching
+    Extended DataExtractor that supports custom field configuration
+    with caching
     """
 
     def __init__(
@@ -441,7 +452,8 @@ class CustomDataExtractor(DataExtractor):
     def extract_data_with_separation(
         self, cleaned_html, original_html, url=None
     ):
-        """Extract data using cleaned HTML for code generation and original HTML for execution"""
+        """Extract data using cleaned HTML for code generation and
+        original HTML for execution"""
         try:
             return super().extract_data_with_separation(
                 cleaned_html, original_html, url, self.fields
@@ -466,7 +478,8 @@ def scrape(
         url: URL to scrape
         api_key: AI provider API key
         fields: List of fields to extract
-        model_name: AI model name (optional, auto-detects based on api_key pattern)
+        model_name: AI model name (optional, auto-detects based on
+                   api_key pattern)
         format: Output format - 'json' (default) or 'csv'
 
     Returns:
@@ -489,7 +502,8 @@ if __name__ == "__main__":
     )
     if not api_key:
         print(
-            "Please set one of: GEMINI_API_KEY, OPENAI_API_KEY, or ANTHROPIC_API_KEY environment variable"
+            "Please set one of: GEMINI_API_KEY, OPENAI_API_KEY, "
+            "or ANTHROPIC_API_KEY environment variable"
         )
         exit(1)
 
@@ -510,7 +524,8 @@ if __name__ == "__main__":
             "https://example.com/jobs", save_to_file=True
         )
         print(
-            f"Successfully scraped data: {result['metadata']['items_extracted']} items"
+            "Successfully scraped data: "
+            f"{result['metadata']['items_extracted']} items"
         )
         print(f"Fields extracted: {result['fields']}")
         if result.get("saved_to"):

@@ -215,7 +215,8 @@ class DataExtractor:
         return ["company_name", "job_title", "apply_link", "salary_range"]
 
     def generate_beautifulsoup_code(self, html_content, url=None, fields=None):
-        """Use Gemini to generate BeautifulSoup extraction code with caching support"""
+        """Use Gemini to generate BeautifulSoup extraction code with
+        caching support"""
         # Get fields for caching (use provided fields or default)
         extraction_fields = fields or self.get_extraction_fields()
 
@@ -235,33 +236,45 @@ class DataExtractor:
 
         # Prepare the prompt for the AI model
         prompt = f"""
-You are an expert web scraper. Analyze the following HTML content and generate a Python function using BeautifulSoup that extracts structured data.
+You are an expert web scraper. Analyze the following HTML content and
+generate a Python function using BeautifulSoup that extracts structured data.
 
-IMPORTANT CONTEXT: The HTML provided has been intelligently cleaned and reduced:
-- Repeated structures have been sampled (only 2 samples shown from groups of 3+ similar elements)
-- Empty divs, scripts, styles, ads, and navigation elements have been removed
+IMPORTANT CONTEXT: The HTML provided has been intelligently cleaned and
+reduced:
+- Repeated structures have been sampled (only 2 samples shown from groups
+  of 3+ similar elements)
+- Empty divs, scripts, styles, ads, and navigation elements have been
+  removed
 - The final extraction will run on the FULL original HTML with ALL items
-- Your code must be designed to handle the complete dataset, not just the samples shown
+- Your code must be designed to handle the complete dataset, not just the
+  samples shown
 
 Requirements:
-1. Create a function named 'extract_data(html_content)' that takes HTML string as input
+1. Create a function named 'extract_data(html_content)' that takes HTML
+   string as input
 2. Return structured data as a JSON-serializable dictionary/list
 3. Only extract the following fields: {field_descriptions}
-4. Handle edge cases and missing elements gracefully using try-except blocks
+4. Handle edge cases and missing elements gracefully using
+   try-except blocks
 5. Use descriptive field names in the output that match the requested fields
 6. Group related data logically
 7. Always return the same structure even if some fields are empty
 8. Include comprehensive error handling
-9. For each item/record, include all requested fields even if some are null/empty
-10. **Design for scalability** - your selectors must work for hundreds/thousands of similar items
-11. **Use robust selectors** that will work across all instances, not just the 2 samples shown
-12. **Avoid hardcoded indices** - use class names, attributes, and structural patterns instead
+9. For each item/record, include all requested fields even if some
+   are null/empty
+10. **Design for scalability** - your selectors must work for
+    hundreds/thousands of similar items
+11. **Use robust selectors** that will work across all instances,
+    not just the 2 samples shown
+12. **Avoid hardcoded indices** - use class names, attributes, and
+    structural patterns instead
 
 Selector Best Practices:
 - Use CSS selectors or find_all() methods that capture ALL matching elements
 - Prefer class-based selectors over position-based ones
 - Test selectors that work for recurring patterns, not just individual samples
-- Use broad selectors like `soup.find_all('div', class_='item-class')` to catch all items
+- Use broad selectors like `soup.find_all('div', class_='item-class')`
+  to catch all items
 - Handle variations in HTML structure within the same element type
 
 Error Handling Requirements:
@@ -300,7 +313,8 @@ HTML Content:
 
         try:
             self.logger.info(
-                f"Generating BeautifulSoup code with {self.model_name} for fields: {extraction_fields}"
+                f"Generating BeautifulSoup code with {self.model_name} "
+                f"for fields: {extraction_fields}"
             )
             response_text = self._generate_content_with_ai(prompt)
 
@@ -361,9 +375,9 @@ HTML Content:
             # Validate that the result is JSON serializable
             json.dumps(extracted_data)
 
-            self.logger.info(
-                f"Successfully extracted data with {len(extracted_data) if isinstance(extracted_data, list) else 'structured'} items"
-            )
+            count = (len(extracted_data) if isinstance(extracted_data, list)
+                     else 'structured')
+            self.logger.info(f"Successfully extracted data with {count} items")
             return extracted_data
 
         except Exception as e:
@@ -387,7 +401,8 @@ HTML Content:
 
             with open(filepath, "w", encoding="utf-8") as f:
                 f.write(
-                    f"# Generated extraction code for: {url or 'Unknown URL'}\n"
+                    f"# Generated extraction code for: "
+                    f"{url or 'Unknown URL'}\n"
                 )
                 f.write(f"# Generated at: {datetime.now().isoformat()}\n\n")
                 f.write(code)
@@ -481,7 +496,8 @@ HTML Content:
             # Write data rows
             for item in data_list:
                 if isinstance(item, dict):
-                    # Ensure all fields are present, fill missing with empty string
+                    # Ensure all fields are present, fill missing with
+                    # empty string
                     row = {field: item.get(field, "") for field in fieldnames}
                     writer.writerow(row)
 
@@ -527,7 +543,8 @@ HTML Content:
             code_filename = self._save_extraction_code(url, extraction_code)
 
             self.logger.info(
-                f"Extraction completed. Data: {output_filename}, Code: {code_filename}"
+                f"Extraction completed. Data: {output_filename}, "
+                f"Code: {code_filename}"
             )
 
             return {
@@ -597,11 +614,14 @@ HTML Content:
         self, cleaned_html, original_html, url=None, fields=None
     ):
         """
-        Extract data using cleaned HTML for code generation and original HTML for execution.
+        Extract data using cleaned HTML for code generation and
+        original HTML for execution.
 
         Args:
-            cleaned_html: Cleaned HTML used for AI code generation (reduced size)
-            original_html: Original HTML used for data extraction (complete data)
+            cleaned_html: Cleaned HTML used for AI code generation
+                          (reduced size)
+            original_html: Original HTML used for data extraction
+                           (complete data)
             url: URL for caching and logging
             fields: Fields to extract
 
@@ -610,7 +630,8 @@ HTML Content:
         """
         try:
             self.logger.info(
-                "Using HTML separation: cleaned for code generation, original for execution"
+                "Using HTML separation: cleaned for code generation, "
+                "original for execution"
             )
 
             # Generate code using cleaned HTML (smaller, focused for AI)

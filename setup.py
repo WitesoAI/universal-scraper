@@ -14,9 +14,11 @@ try:
         long_description = f.read()
 except FileNotFoundError:
     long_description = """
-    Universal Scraper - AI-powered web scraping with customizable field extraction
+    Universal Scraper - AI-powered web scraping with customizable
+    field extraction
 
-    A Python module that uses AI to automatically extract structured data from web pages
+    A Python module that uses AI to automatically extract structured data
+    from web pages
     with user-defined fields and JSON output.
     """
 
@@ -25,7 +27,10 @@ setup(
     version="1.8.0",
     author="Ayushi Gupta & Pushpender Singh",
     author_email="aayushi.gupta0405@gmail.com",
-    description="AI-powered web scraping with customizable field extraction using multiple AI providers",
+    description=(
+        "AI-powered web scraping with customizable field extraction "
+        "using multiple AI providers"
+    ),
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/WitesoAI/universal-scraper",

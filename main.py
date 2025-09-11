@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
 """
 Universal Web Scraper CLI
-A command-line interface for AI-powered web scraping with multi-provider support.
+A command-line interface for AI-powered web scraping with
+multi-provider support.
 
 Usage:
-    universal-scraper <URL> [--output OUTPUT_FILE] [--api-key API_KEY] [--model MODEL]
+    universal-scraper <URL> [--output OUTPUT_FILE] [--api-key API_KEY]
+    [--model MODEL]
 
 Example:
     universal-scraper https://example.com/jobs --output jobs_data.json
-    universal-scraper https://example.com/products --api-key YOUR_KEY --model gpt-4
+    universal-scraper https://example.com/products --api-key YOUR_KEY
+    --model gpt-4
 """
 
 import argparse
@@ -91,7 +94,8 @@ def scrape_multiple_urls(urls_file, scraper, output_dir, format_type="json"):
         for result in results:
             if result.get("error"):
                 print(
-                    f"  - {result['url']}: {result.get('error', 'Unknown error')}"
+                    f"  - {result['url']}: "
+                    f"{result.get('error', 'Unknown error')}"
                 )
         return False
 
@@ -100,15 +104,20 @@ def scrape_multiple_urls(urls_file, scraper, output_dir, format_type="json"):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Universal Web Scraper - AI-powered structured data extraction with multi-provider support",
+        description=(
+            "Universal Web Scraper - AI-powered structured data extraction "
+            "with multi-provider support"
+        ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
   universal-scraper https://example.com/jobs
   universal-scraper https://example.com/products --output products.json
   universal-scraper https://news.ycombinator.com --api-key YOUR_GEMINI_KEY
-  universal-scraper https://example.com/data --api-key YOUR_OPENAI_KEY --model gpt-4
-  universal-scraper https://example.com/content --api-key YOUR_ANTHROPIC_KEY --model claude-3-haiku-20240307
+  universal-scraper https://example.com/data --api-key YOUR_OPENAI_KEY
+  --model gpt-4
+  universal-scraper https://example.com/content
+  --api-key YOUR_ANTHROPIC_KEY --model claude-3-haiku-20240307
   universal-scraper --urls urls.txt --output-dir scraped_data --format csv
 
 Multi-Provider Support:
@@ -146,18 +155,27 @@ Multi-Provider Support:
     # AI Provider configuration
     parser.add_argument(
         "--api-key",
-        help="AI provider API key (or set GEMINI_API_KEY/OPENAI_API_KEY/ANTHROPIC_API_KEY env var)",
+        help=(
+            "AI provider API key (or set GEMINI_API_KEY/OPENAI_API_KEY/"
+            "ANTHROPIC_API_KEY env var)"
+        ),
     )
     parser.add_argument(
         "--model",
-        help="AI model name (e.g., gemini-2.5-flash, gpt-4, claude-3-haiku-20240307)",
+        help=(
+            "AI model name (e.g., gemini-2.5-flash, gpt-4, "
+            "claude-3-haiku-20240307)"
+        ),
     )
 
     # Field configuration
     parser.add_argument(
         "--fields",
         nargs="+",
-        help="Fields to extract (e.g., --fields product_name product_price product_rating)",
+        help=(
+            "Fields to extract (e.g., --fields product_name product_price "
+            "product_rating)"
+        ),
     )
 
     # Logging options
@@ -237,26 +255,33 @@ Multi-Provider Support:
             if not result.get("error"):
                 print("\n✅ Scraping completed successfully!")
                 print(
-                    f"📄 Data saved to: {result.get('saved_to', output_filename)}"
+                    f"📄 Data saved to: "
+                    f"{result.get('saved_to', output_filename)}"
                 )
                 print(
-                    f"📊 Items extracted: {result['metadata']['items_extracted']}"
+                    f"📊 Items extracted: "
+                    f"{result['metadata']['items_extracted']}"
                 )
-                print(
-                    f"🗜️ HTML size reduction: {len(result['metadata']) - result['metadata']['cleaned_html_length']}"
+                size_reduction = (
+                    len(result['metadata']) -
+                    result['metadata']['cleaned_html_length']
                 )
+                print(f"🗜️ HTML size reduction: {size_reduction}")
 
                 # Save cleaned HTML if requested
                 if args.save_html:
-                    # This would require modifying scraper to return cleaned HTML
+                    # This would require modifying scraper to return
+                    # cleaned HTML
                     print(
-                        f"💾 Cleaned HTML would be saved to: {args.save_html}"
+                        f"💾 Cleaned HTML would be saved to: "
+                        f"{args.save_html}"
                     )
 
                 sys.exit(0)
             else:
                 print(
-                    f"\n❌ Scraping failed: {result.get('error', 'Unknown error')}"
+                    f"\n❌ Scraping failed: "
+                    f"{result.get('error', 'Unknown error')}"
                 )
                 sys.exit(1)
 

@@ -13,7 +13,8 @@ from bs4 import BeautifulSoup
 class CodeCache:
     """
     A caching system for BeautifulSoup extraction codes.
-    Stores generated codes based on URL (without query params) and structural hash.
+    Stores generated codes based on URL (without query params) and
+    structural hash.
     """
 
     def __init__(
@@ -91,7 +92,8 @@ class CodeCache:
 
     def _compute_structural_hash(self, html_content: str) -> str:
         """
-        Compute structural hash by replacing all text content with placeholders.
+        Compute structural hash by replacing all text content with
+        placeholders.
         This creates a hash based on HTML structure rather than content.
 
         Args:
@@ -129,7 +131,8 @@ class CodeCache:
                         "alt",
                     ]
                     for attr in list(element.attrs.keys()):
-                        # Clean dynamic attributes but preserve structural ones like class
+                        # Clean dynamic attributes but preserve structural
+                        # ones like class
                         if any(
                             attr.startswith(pattern)
                             for pattern in attrs_to_clean
@@ -251,9 +254,11 @@ class CodeCache:
                 # Look for cached code
                 cursor.execute(
                     """
-                    SELECT extraction_code, code_file_path, use_count
+                    SELECT extraction_code, code_file_path,
+                           use_count
                     FROM extraction_cache
-                    WHERE url_clean = ? AND structural_hash = ? AND fields_hash = ?
+                    WHERE url_clean = ? AND structural_hash = ?
+                          AND fields_hash = ?
                 """,
                     (url_clean, structural_hash, fields_hash),
                 )
@@ -267,8 +272,10 @@ class CodeCache:
                     cursor.execute(
                         """
                         UPDATE extraction_cache
-                        SET last_used_at = CURRENT_TIMESTAMP, use_count = use_count + 1
-                        WHERE url_clean = ? AND structural_hash = ? AND fields_hash = ?
+                        SET last_used_at = CURRENT_TIMESTAMP,
+                            use_count = use_count + 1
+                        WHERE url_clean = ? AND structural_hash = ?
+                              AND fields_hash = ?
                     """,
                         (url_clean, structural_hash, fields_hash),
                     )
@@ -276,7 +283,8 @@ class CodeCache:
                     conn.commit()
 
                     self.logger.info(
-                        f"Cache HIT for {url_clean} (used {use_count + 1} times)"
+                        f"Cache HIT for {url_clean} "
+                        f"(used {use_count + 1} times)"
                     )
                     return extraction_code
                 else:
@@ -319,7 +327,8 @@ class CodeCache:
                 cursor.execute(
                     """
                     INSERT OR REPLACE INTO extraction_cache
-                    (url_clean, structural_hash, fields_hash, extraction_code, code_file_path)
+                    (url_clean, structural_hash, fields_hash,
+                     extraction_code, code_file_path)
                     VALUES (?, ?, ?, ?, ?)
                 """,
                     (
@@ -334,7 +343,8 @@ class CodeCache:
                 conn.commit()
 
                 self.logger.info(
-                    f"Code cached for {url_clean} (hash: {structural_hash[:16]}...)"
+                    f"Code cached for {url_clean} "
+                    f"(hash: {structural_hash[:16]}...)"
                 )
                 return True
 
