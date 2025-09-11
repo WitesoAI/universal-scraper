@@ -8,19 +8,6 @@ This document outlines the planned features and improvements for Universal Scrap
 - [ ] Captcha Resolve using Third Party api
 - [ ] Decision making algo to switch to selenium for JS heavy sites for fetching HTML
 
-## Save More Tokens
-
-- [ ] Compress final html to remove the whitespaces and empty lines before sending it to LLM
-- [ ] Non Essential Attributes remover in HTML cleaner
-
-```
-REMOVE_ATTRIBUTES = [
-    'style', 'onclick', 'onload', 'onerror', 'onmouseover', 'onmouseout',
-    'data-analytics', 'data-tracking', 'data-testid', 'aria-describedby',
-    'tabindex', 'accesskey', 'draggable', .........
-]
-```
-
 ## Extra Features
 
 - [ ] Export data to excel (xslx) for adding formating & styling
