@@ -105,45 +105,52 @@ Here's a real working example showing Universal Scraper in action with OpenAI GP
 
 ```python
 >>> from universal_scraper import UniversalScraper
->>> scraper = UniversalScraper(api_key="sk-proj-XXXXXXXXXX", model_name="gpt-4o")
-2025-09-06 14:08:13 - code_cache - INFO - CodeCache initialized with database: temp/extraction_cache.db
-2025-09-06 14:08:13 - data_extractor - INFO - Code caching enabled
-2025-09-06 14:08:13 - data_extractor - INFO - Using LiteLLM with model: gpt-4o
-2025-09-06 14:08:13 - data_extractor - INFO - Initialized DataExtractor with model: gpt-4o
+>>> scraper = UniversalScraper(api_key="AIzxxxxxxxxxxxxxxxxxxxxx", model_name="gemini-2.5-pro")
+2025-09-11 16:49:31 - code_cache - INFO - CodeCache initialized with database: temp/extraction_cache.db
+2025-09-11 16:49:31 - data_extractor - INFO - Code caching enabled
+2025-09-11 16:49:31 - data_extractor - INFO - Using Google Gemini API with model: gemini-2.5-pro
+2025-09-11 16:49:31 - data_extractor - INFO - Initialized DataExtractor with model: gemini-2.5-pro
 
 >>> # Set fields for e-commerce laptop scraping
 >>> scraper.set_fields(["product_name", "product_price", "product_rating", "product_description", "availability"])
-2025-09-06 14:08:15 - universal_scraper - INFO - Extraction fields updated: ['product_name', 'product_price', 'product_rating', 'product_description', 'availability']
+2025-09-11 16:52:45 - universal_scraper - INFO - Extraction fields updated: ['product_name', 'product_price', 'product_rating', 'product_description', 'availability']
 
 >>> result = scraper.scrape_url("https://webscraper.io/test-sites/e-commerce/allinone/computers/laptops", save_to_file=True, format='csv')
-2025-09-06 14:08:20 - universal_scraper - INFO - Starting scraping for: https://webscraper.io/test-sites/e-commerce/allinone/computers/laptops
-2025-09-06 14:08:20 - html_fetcher - INFO - Starting to fetch HTML for: https://webscraper.io/test-sites/e-commerce/allinone/computers/laptops
-2025-09-06 14:08:20 - html_fetcher - INFO - Fetching with cloudscraper...
-2025-09-06 14:08:21 - html_fetcher - INFO - Successfully fetched content with cloudscraper. Length: 163468
-2025-09-06 14:08:21 - html_cleaner - INFO - Starting HTML cleaning process...
-2025-09-06 14:08:21 - html_cleaner - INFO - Removed noise. Length: 142586
-2025-09-06 14:08:21 - html_cleaner - INFO - Removed headers/footers. Length: 135883
-2025-09-06 14:08:21 - html_cleaner - INFO - Focused on main content. Length: 135646
-2025-09-06 14:08:21 - html_cleaner - INFO - Found 117 similar structures, keeping 2, removing 115
-2025-09-06 14:08:21 - html_cleaner - INFO - Removed 115 repeating structure elements
-2025-09-06 14:08:21 - html_cleaner - INFO - Removed repeating structures. Length: 2933
-2025-09-06 14:08:21 - html_cleaner - INFO - Removed 3 empty div elements in 1 iterations
-2025-09-06 14:08:21 - html_cleaner - INFO - HTML cleaning completed. Original: 150714, Final: 2844
-2025-09-06 14:08:21 - html_cleaner - INFO - Reduction: 98.1%
-2025-09-06 14:08:21 - data_extractor - INFO - Using HTML separation: cleaned for code generation, original for execution
-2025-09-06 14:08:21 - code_cache - INFO - Cache MISS for https://webscraper.io/test-sites/e-commerce/allinone/computers/laptops
-2025-09-06 14:08:21 - data_extractor - INFO - Generating BeautifulSoup code with gpt-4o for fields: ['product_name', 'product_price', 'product_rating', 'product_description', 'availability']
-2025-09-06 14:08:21 - LiteLLM - INFO - LiteLLM completion() model= gpt-4o; provider = openai
-2025-09-06 14:08:25 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
-2025-09-06 14:08:25 - code_cache - INFO - Code cached for https://webscraper.io/test-sites/e-commerce/allinone/computers/laptops
-2025-09-06 14:08:25 - data_extractor - INFO - Successfully generated BeautifulSoup code
-2025-09-06 14:08:25 - data_extractor - INFO - Executing generated extraction code...
-2025-09-06 14:08:25 - data_extractor - INFO - Successfully extracted data with 117 items
-2025-09-06 14:08:25 - universal_scraper - INFO - Successfully extracted data from https://webscraper.io/test-sites/e-commerce/allinone/computers/laptops
+2025-09-11 16:52:55 - universal_scraper - INFO - Starting scraping for: https://webscraper.io/test-sites/e-commerce/allinone/computers/laptops
+2025-09-11 16:52:55 - html_fetcher - INFO - Starting to fetch HTML for: https://webscraper.io/test-sites/e-commerce/allinone/computers/laptops
+2025-09-11 16:52:55 - html_fetcher - INFO - Fetching https://webscraper.io/test-sites/e-commerce/allinone/computers/laptops with cloudscraper...
+2025-09-11 16:52:57 - html_fetcher - INFO - Successfully fetched content with cloudscraper. Length: 163496
+2025-09-11 16:52:57 - html_fetcher - INFO - Successfully fetched HTML with cloudscraper
+2025-09-11 16:52:57 - html_cleaner - INFO - Starting HTML cleaning process...
+2025-09-11 16:52:57 - html_cleaner - INFO - Removed noise. Length: 142614
+2025-09-11 16:52:57 - html_cleaner - INFO - Removed headers/footers. Length: 135883
+2025-09-11 16:52:57 - html_cleaner - INFO - Focused on main content. Length: 135646
+2025-09-11 16:52:57 - html_cleaner - INFO - Found 117 similar structures, keeping 2, removing 115
+2025-09-11 16:52:57 - html_cleaner - INFO - Found 117 similar structures, keeping 2, removing 115
+2025-09-11 16:52:57 - html_cleaner - INFO - Found 117 similar structures, keeping 2, removing 115
+2025-09-11 16:52:57 - html_cleaner - INFO - Found 117 similar structures, keeping 2, removing 115
+2025-09-11 16:52:57 - html_cleaner - INFO - Removed 115 repeating structure elements
+2025-09-11 16:52:57 - html_cleaner - INFO - Removed repeating structures. Length: 2933
+2025-09-11 16:52:57 - html_cleaner - INFO - Limited select options. Length: 2933
+2025-09-11 16:52:57 - html_cleaner - INFO - Removed 3 empty div elements in 1 iterations
+2025-09-11 16:52:57 - html_cleaner - INFO - Removed empty divs. Length: 2844
+2025-09-11 16:52:57 - html_cleaner - INFO - Removed 0 non-essential attributes (71 → 71)
+2025-09-11 16:52:57 - html_cleaner - INFO - Removed non-essential attributes. Length: 2844
+2025-09-11 16:52:57 - html_cleaner - INFO - Removed whitespace between tags. Length: 2844 → 2619 (7.9% reduction)
+2025-09-11 16:52:57 - html_cleaner - INFO - HTML cleaning completed. Original: 150742, Final: 2619
+2025-09-11 16:52:57 - html_cleaner - INFO - Reduction: 98.3%
+2025-09-11 16:52:57 - data_extractor - INFO - Using HTML separation: cleaned for code generation, original for execution
+2025-09-11 16:52:57 - code_cache - INFO - Cache MISS for https://webscraper.io/test-sites/e-commerce/allinone/computers/laptops
+2025-09-11 16:52:57 - data_extractor - INFO - Generating BeautifulSoup code with gemini-2.5-pro for fields: ['product_name', 'product_price', 'product_rating', 'product_description', 'availability']
+2025-09-11 16:53:39 - code_cache - INFO - Code cached for https://webscraper.io/test-sites/e-commerce/allinone/computers/laptops (hash: bd0ed6e62683fcfb...)
+2025-09-11 16:53:39 - data_extractor - INFO - Successfully generated BeautifulSoup code
+2025-09-11 16:53:39 - data_extractor - INFO - Executing generated extraction code...
+2025-09-11 16:53:39 - data_extractor - INFO - Successfully extracted data with 117 items
+2025-09-11 16:53:39 - universal_scraper - INFO - Successfully extracted data from https://webscraper.io/test-sites/e-commerce/allinone/computers/laptops
 >>>
 
 # ✨ Results: 117 laptop products extracted from 163KB HTML in ~5 seconds!
-# 🎯 98.1% HTML size reduction (163KB → 2.8KB for AI processing)  
+# 🎯 98.3% HTML size reduction (163KB → 2.6KB for AI processing to generate BeautifulSoup4 code)  
 # 💾 Data automatically saved as CSV with product_name, product_price, product_rating, etc.
 ```
 
