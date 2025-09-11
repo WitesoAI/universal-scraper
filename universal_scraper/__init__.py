@@ -8,7 +8,7 @@ and extracting structured data using AI.
 from .scraper import UniversalScraper, scrape
 
 __version__ = "1.8.0"
-__author__ = "Ayushi Gupta & Pushpender Singh"
-__email__ = "aayushi.gupta0405@gmail.com"
+__author__ = "Witeso"
+__email__ = "support@witeso.com"
 
 __all__ = ["UniversalScraper", "scrape"]

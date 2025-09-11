@@ -751,7 +751,16 @@ See [ROADMAP.md](ROADMAP.md) for planned features and improvements.
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Submit a pull request
+4. Run `pytest` to run testcases
+5. Test PEP Standard: `
+
+```
+flake8 universal_scraper/ --count --select=E9,F63,F7,F82 --show-source --statistics
+
+flake8 universal_scraper/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+```
+
+6. Submit a pull request
 
 ## License
 

@@ -25,8 +25,8 @@ except FileNotFoundError:
 setup(
     name="universal-scraper",
     version="1.8.0",
-    author="Ayushi Gupta & Pushpender Singh",
-    author_email="aayushi.gupta0405@gmail.com",
+    author="Witeso",
+    author_email="support@witeso.com",
     description=(
         "AI-powered web scraping with customizable field extraction "
         "using multiple AI providers"
