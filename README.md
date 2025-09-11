@@ -16,6 +16,7 @@
 - [💻 Live Working Example](#-live-working-example)
 - [How It Works](#how-it-works)
 - [Features](#features)
+- [🧹 Smart HTML Cleaner](#-smart-html-cleaner)
 - [Installation (Recommended)](#installation-recommended)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
@@ -24,8 +25,7 @@
   - [3. Convenience Function](#3-convenience-function)
 - [📁 Export Formats](#-export-formats)
 - [CLI Usage](#cli-usage)
-- [🧹 Smart HTML Cleaning](#-smart-html-cleaning)
-- [🚀 Smart Caching (NEW!)](#-smart-caching-new)
+- [Cache Management](#cache-management)
 - [Advanced Usage](#advanced-usage)
 - [API Reference](#api-reference)
 - [Output Format](#output-format)
@@ -170,12 +170,40 @@ Here's a real working example showing Universal Scraper in action with OpenAI GP
 - 🤖 **Multi-Provider AI Support**: Uses Google Gemini by default, with support for OpenAI, Anthropic, and 100+ other models via LiteLLM
 - 🎯 **Customizable Fields**: Define exactly which fields you want to extract (e.g., company name, job title, salary)
 - 🚀 **Smart Caching**: Automatically caches extraction code based on HTML structure - saves 90%+ API tokens on repeat scraping
-- 🧹 **Smart HTML Cleaner**: Removes noise and reduces HTML by 91%+ - significantly cuts token usage for AI processing
+- 🧹 **Smart HTML Cleaner**: Removes noise and reduces HTML by 98%+ - significantly cuts token usage for AI processing
 - 🔧 **Easy to Use**: Simple API for both quick scraping and advanced use cases
 - 📦 **Modular Design**: Built with clean, modular components
 - 🛡️ **Robust**: Handles edge cases, missing data, and various HTML structures
 - 💾 **Multiple Output Formats**: Support for both JSON (default) and CSV export formats
 - 📊 **Structured Output**: Clean, structured data output with comprehensive metadata
+
+## 🧹 Smart HTML Cleaner
+
+### What Gets Removed
+- **Scripts & Styles**: JavaScript, CSS, and style blocks
+- **Ads & Analytics**: Advertisement content and tracking scripts
+- **Navigation**: Headers, footers, sidebars, and menu elements  
+- **Metadata**: Meta tags, SEO tags, and hidden elements
+- **Empty Elements**: Recursively removes empty div elements that don't contain meaningful content
+- **Noise**: Comments, unnecessary attributes, and whitespace
+
+### Repeating Structure Reduction (NEW!)
+The cleaner now intelligently detects and reduces repeated HTML structures:
+
+- **Pattern Detection**: Uses structural hashing + similarity algorithms to find repeated elements
+- **Smart Sampling**: Keeps 2 samples from groups of 3+ similar structures (e.g., 20 job cards → 2 samples)
+- **Structure Preservation**: Maintains document flow and parent-child relationships
+- **AI Optimization**: Provides enough samples for pattern recognition without overwhelming the AI
+
+### Empty Element Removal (NEW!)
+The cleaner now intelligently removes empty div elements:
+
+- **Recursive Processing**: Starts from innermost divs and works outward
+- **Content Detection**: Preserves divs with text, images, inputs, or interactive elements
+- **Structure Preservation**: Maintains parent-child relationships and avoids breaking important structural elements
+- **Smart Analysis**: Removes placeholder/skeleton divs while keeping functional containers
+
+**Example**: Removes empty animation placeholders like `<div class="animate-pulse"></div>` while preserving divs containing actual content.
 
 ## Installation (Recommended)
 
@@ -422,41 +450,7 @@ universal-scraper --urls urls.txt --output-dir batch_results
 python main.py https://example.com/jobs --api-key YOUR_KEY --model gpt-4
 ```
 
-## 🧹 Smart HTML Cleaning
-
-**Reduces HTML size by 98%+** before sending to AI - dramatically cuts token usage:
-
-### What Gets Removed
-- **Scripts & Styles**: JavaScript, CSS, and style blocks
-- **Ads & Analytics**: Advertisement content and tracking scripts
-- **Navigation**: Headers, footers, sidebars, and menu elements  
-- **Metadata**: Meta tags, SEO tags, and hidden elements
-- **Empty Elements**: Recursively removes empty div elements that don't contain meaningful content
-- **Noise**: Comments, unnecessary attributes, and whitespace
-
-### Repeating Structure Reduction (NEW!)
-The cleaner now intelligently detects and reduces repeated HTML structures:
-
-- **Pattern Detection**: Uses structural hashing + similarity algorithms to find repeated elements
-- **Smart Sampling**: Keeps 2 samples from groups of 3+ similar structures (e.g., 20 job cards → 2 samples)
-- **Structure Preservation**: Maintains document flow and parent-child relationships
-- **AI Optimization**: Provides enough samples for pattern recognition without overwhelming the AI
-
-### Empty Element Removal (NEW!)
-The cleaner now intelligently removes empty div elements:
-
-- **Recursive Processing**: Starts from innermost divs and works outward
-- **Content Detection**: Preserves divs with text, images, inputs, or interactive elements
-- **Structure Preservation**: Maintains parent-child relationships and avoids breaking important structural elements
-- **Smart Analysis**: Removes placeholder/skeleton divs while keeping functional containers
-
-**Example**: Removes empty animation placeholders like `<div class="animate-pulse"></div>` while preserving divs containing actual content.
-
-## 🚀 Smart Caching (NEW!)
-
-**Saves 90%+ API tokens** by reusing extraction code for similar HTML structures:
-
-### Cache Management
+## Cache Management
 ```python
 scraper = UniversalScraper(api_key="your_key")
 
@@ -762,48 +756,16 @@ result = scraper.scrape_url("https://example.com/jobs?page=DYNAMIC”, min_limit
 ```
 - [ ] Giving Agent a functionality to scrap any website using this module: Add MCP (Model Context Protocal) in CLI to run a SSE (Server Side Event) API, which can be integrated in any Agent such as Claude Code, Cursor, etc
 
-## Core Contributors
+## Contributors
 
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-
-<table>
-<tr>
-
-<td align="center">
-    <a href="https://github.com/PushpenderIndia">
-        <kbd><img src="https://avatars3.githubusercontent.com/PushpenderIndia?size=400" width="100px;" alt=""/></kbd><br />
-        <sub><b>Pushpender Singh</b></sub>
-    </a><br />
-    <a href="https://github.com/WitesoAI/universal-scraper/commits?author=PushpenderIndia" title="Code"> :computer: </a> 
-</td>
-
-<td align="center">
-    <a href="https://github.com/Ayushi0405">
-        <kbd><img src="https://avatars3.githubusercontent.com/Ayushi0405?size=400" width="100px;" alt=""/></kbd><br />
-        <sub><b>Ayushi Gupta</b></sub>
-    </a><br />
-    <a href="https://github.com/WitesoAI/universal-scraper/commits?author=Ayushi0405" title="Code"> :computer: </a> 
-</td>
-
-</tr>
-</tr>
-</table>
-
-<!-- markdownlint-enable -->
-<!-- prettier-ignore-end -->
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
-Contributions of any kind welcome!
+[Contributors List](https://github.com/WitesoAI/universal-scraper/graphs/contributors)
 
 ## Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Run tests: `python test_module.py`
-5. Submit a pull request
+4. Submit a pull request
 
 ## License
 
