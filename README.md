@@ -3,6 +3,7 @@
 <h2 align="center"> The Python package for scraping data from any website</h2>
 
 <p align="center">
+<a href="https://www.codefactor.io/repository/github/witesoai/universal-scraper"><img alt="pypi" src="https://www.codefactor.io/repository/github/witesoai/universal-scraper/badge"></a>  
 <a href="https://pypi.org/project/universal-scraper/"><img alt="pypi" src="https://img.shields.io/pypi/v/universal-scraper.svg"></a>
 <a href="https://pepy.tech/project/universal-scraper?versions=1*&versions=2*&versions=3*"><img alt="Downloads" src="https://pepy.tech/badge/universal-scraper"></a>
 <a href="https://pepy.tech/project/universal-scraper?versions=1*&versions=2*&versions=3*"><img alt="Downloads" src="https://pepy.tech/badge/universal-scraper/month"></a>
