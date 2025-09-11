@@ -2,18 +2,20 @@
 Setup script for Universal Scraper package
 """
 
-from setuptools import setup, find_packages
+from setuptools import setup
 import os
 
 # Read the contents of README file
 this_directory = os.path.abspath(os.path.dirname(__file__))
 try:
-    with open(os.path.join(this_directory, "README.md"), encoding="utf-8") as f:
+    with open(
+        os.path.join(this_directory, "README.md"), encoding="utf-8"
+    ) as f:
         long_description = f.read()
 except FileNotFoundError:
     long_description = """
     Universal Scraper - AI-powered web scraping with customizable field extraction
-    
+
     A Python module that uses AI to automatically extract structured data from web pages
     with user-defined fields and JSON output.
     """

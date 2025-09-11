@@ -5,7 +5,7 @@ import sqlite3
 import logging
 import re
 from typing import Optional, Dict, Any
-from urllib.parse import urlparse, urljoin
+from urllib.parse import urlparse
 from datetime import datetime
 from bs4 import BeautifulSoup
 
@@ -16,7 +16,9 @@ class CodeCache:
     Stores generated codes based on URL (without query params) and structural hash.
     """
 
-    def __init__(self, db_path: str = "extraction_cache.db", cache_dir: str = "cache"):
+    def __init__(
+        self, db_path: str = "extraction_cache.db", cache_dir: str = "cache"
+    ):
         """
         Initialize the code cache.
 
@@ -62,7 +64,7 @@ class CodeCache:
             # Create index for faster lookups
             cursor.execute(
                 """
-                CREATE INDEX IF NOT EXISTS idx_url_hash 
+                CREATE INDEX IF NOT EXISTS idx_url_hash
                 ON extraction_cache(url_clean, structural_hash, fields_hash)
             """
             )
@@ -102,7 +104,9 @@ class CodeCache:
             soup = BeautifulSoup(html_content, "html.parser")
 
             # Remove script and style elements completely
-            for element in soup(["script", "style", "meta", "link", "noscript"]):
+            for element in soup(
+                ["script", "style", "meta", "link", "noscript"]
+            ):
                 element.decompose()
 
             # Replace all text content with a placeholder
@@ -126,7 +130,10 @@ class CodeCache:
                     ]
                     for attr in list(element.attrs.keys()):
                         # Clean dynamic attributes but preserve structural ones like class
-                        if any(attr.startswith(pattern) for pattern in attrs_to_clean):
+                        if any(
+                            attr.startswith(pattern)
+                            for pattern in attrs_to_clean
+                        ):
                             if attr in ["href", "src", "action"]:
                                 element.attrs[attr] = "URL_PLACEHOLDER"
                             elif attr.startswith("data-"):
@@ -138,7 +145,10 @@ class CodeCache:
             for element in soup.find_all(text=True):
                 if element.parent:
                     text_content = element.strip()
-                    if text_content and element.parent.name not in ["script", "style"]:
+                    if text_content and element.parent.name not in [
+                        "script",
+                        "style",
+                    ]:
                         element.replace_with("TEXT_PLACEHOLDER")
 
             # Also clean attributes in all elements
@@ -242,7 +252,7 @@ class CodeCache:
                 cursor.execute(
                     """
                     SELECT extraction_code, code_file_path, use_count
-                    FROM extraction_cache 
+                    FROM extraction_cache
                     WHERE url_clean = ? AND structural_hash = ? AND fields_hash = ?
                 """,
                     (url_clean, structural_hash, fields_hash),
@@ -256,7 +266,7 @@ class CodeCache:
                     # Update usage statistics
                     cursor.execute(
                         """
-                        UPDATE extraction_cache 
+                        UPDATE extraction_cache
                         SET last_used_at = CURRENT_TIMESTAMP, use_count = use_count + 1
                         WHERE url_clean = ? AND structural_hash = ? AND fields_hash = ?
                     """,
@@ -308,7 +318,7 @@ class CodeCache:
                 # Insert or replace the cached code
                 cursor.execute(
                     """
-                    INSERT OR REPLACE INTO extraction_cache 
+                    INSERT OR REPLACE INTO extraction_cache
                     (url_clean, structural_hash, fields_hash, extraction_code, code_file_path)
                     VALUES (?, ?, ?, ?, ?)
                 """,
@@ -378,7 +388,7 @@ class CodeCache:
 
                 cursor.execute(
                     """
-                    SELECT AVG(use_count), MAX(use_count), MIN(use_count) 
+                    SELECT AVG(use_count), MAX(use_count), MIN(use_count)
                     FROM extraction_cache
                 """
                 )
@@ -387,9 +397,9 @@ class CodeCache:
                 # Get top URLs by usage
                 cursor.execute(
                     """
-                    SELECT url_clean, use_count, last_used_at 
-                    FROM extraction_cache 
-                    ORDER BY use_count DESC 
+                    SELECT url_clean, use_count, last_used_at
+                    FROM extraction_cache
+                    ORDER BY use_count DESC
                     LIMIT 5
                 """
                 )
@@ -428,7 +438,7 @@ class CodeCache:
                 # Delete old entries
                 cursor.execute(
                     """
-                    DELETE FROM extraction_cache 
+                    DELETE FROM extraction_cache
                     WHERE created_at < datetime('now', '-' || ? || ' days')
                 """,
                     (days_old,),
@@ -438,7 +448,9 @@ class CodeCache:
                 conn.commit()
 
                 if removed_count > 0:
-                    self.logger.info(f"Removed {removed_count} old cache entries")
+                    self.logger.info(
+                        f"Removed {removed_count} old cache entries"
+                    )
 
                 return removed_count
 

@@ -20,9 +20,11 @@ class HtmlCleaner:
         self.footer_tags = ["footer"]
         self.noise_tags = ["script", "style", "meta", "link", "noscript"]
 
-        # Non-essential attributes that can be safely removed without affecting data extraction
+        # Non-essential attributes that can be safely removed without
+        # affecting data extraction
         self.remove_attributes = [
-            # Styling and presentation (but NOT class/id - they're needed for BS4 selectors)
+            # Styling and presentation (but NOT class/id - they're needed
+            # for BS4 selectors)
             "style",
             # JavaScript event handlers
             "onclick",
@@ -165,7 +167,8 @@ class HtmlCleaner:
             "nonce",
         ]
 
-        # Essential attributes that should NEVER be removed (critical for data extraction and BS4 selectors)
+        # Essential attributes that should NEVER be removed (critical for
+        # data extraction and BS4 selectors)
         self.essential_attributes = {
             # Core content attributes and selectors
             "id",
@@ -286,7 +289,9 @@ class HtmlCleaner:
                 element.decompose()
 
         # Remove HTML comments
-        for comment in soup.find_all(string=lambda text: isinstance(text, Comment)):
+        for comment in soup.find_all(
+            string=lambda text: isinstance(text, Comment)
+        ):
             comment.extract()
 
         return soup
@@ -299,7 +304,14 @@ class HtmlCleaner:
                 element.decompose()
 
         # Remove by common class/id patterns
-        header_patterns = ["header", "nav", "navigation", "menu", "top-bar", "masthead"]
+        header_patterns = [
+            "header",
+            "nav",
+            "navigation",
+            "menu",
+            "top-bar",
+            "masthead",
+        ]
         footer_patterns = ["footer", "bottom", "copyright", "legal"]
 
         for pattern in header_patterns + footer_patterns:
@@ -340,18 +352,24 @@ class HtmlCleaner:
             if hasattr(child, "name") and child.name:
                 child_tags.append(child.name)
         if child_tags:
-            signature_parts.append("children:" + ",".join(sorted(set(child_tags))))
+            signature_parts.append(
+                "children:" + ",".join(sorted(set(child_tags)))
+            )
 
         return "|".join(signature_parts)
 
-    def find_similar_elements(self, soup, similarity_threshold=0.8, min_occurrences=3):
+    def find_similar_elements(
+        self, soup, similarity_threshold=0.8, min_occurrences=3
+    ):
         """Find elements with similar structure that might be duplicates"""
         body = soup.find("body")
         if not body:
             return []
 
         # Get all elements that could be potential duplicates
-        potential_containers = body.find_all(["div", "article", "section", "li", "tr"])
+        potential_containers = body.find_all(
+            ["div", "article", "section", "li", "tr"]
+        )
 
         # Generate signatures for all elements
         signatures = {}
@@ -400,14 +418,20 @@ class HtmlCleaner:
 
         def get_element_tree_structure(elem, max_depth=3, current_depth=0):
             """Recursively build a structure representation"""
-            if current_depth >= max_depth or not hasattr(elem, "name") or not elem.name:
+            if (
+                current_depth >= max_depth
+                or not hasattr(elem, "name")
+                or not elem.name
+            ):
                 return ""
 
             structure_parts = [elem.name]
 
             # Add important attributes (sorted for consistency)
             if elem.get("class"):
-                structure_parts.append(f"class:{','.join(sorted(elem.get('class')))}")
+                structure_parts.append(
+                    f"class:{','.join(sorted(elem.get('class')))}"
+                )
 
             # Add child structure
             child_structures = []
@@ -420,7 +444,9 @@ class HtmlCleaner:
                         child_structures.append(child_structure)
 
             if child_structures:
-                structure_parts.append(f"children:[{','.join(child_structures)}]")
+                structure_parts.append(
+                    f"children:[{','.join(child_structures)}]"
+                )
 
             return "|".join(structure_parts)
 
@@ -473,7 +499,9 @@ class HtmlCleaner:
                 if hasattr(child, "get_text"):
                     child_text += child.get_text(strip=True)
 
-            if len(direct_text) < len(child_text) * 0.1:  # Less than 10% direct content
+            if (
+                len(direct_text) < len(child_text) * 0.1
+            ):  # Less than 10% direct content
                 continue
 
             meaningful_candidates.append(elem)
@@ -508,7 +536,9 @@ class HtmlCleaner:
                 elem1_str = self.get_element_signature(group1[0]) or ""
                 elem2_str = self.get_element_signature(group2[0]) or ""
 
-                similarity = SequenceMatcher(None, elem1_str, elem2_str).ratio()
+                similarity = SequenceMatcher(
+                    None, elem1_str, elem2_str
+                ).ratio()
 
                 if similarity >= similarity_threshold:
                     similar_group.extend(group2)
@@ -534,7 +564,9 @@ class HtmlCleaner:
 
                 # Sort by position and keep only the first min_keep elements
                 elements_with_pos.sort(key=lambda x: x[0])
-                elements_to_keep = [elem for _, elem in elements_with_pos[:min_keep]]
+                elements_to_keep = [
+                    elem for _, elem in elements_with_pos[:min_keep]
+                ]
                 elements_to_remove_from_group = [
                     elem for _, elem in elements_with_pos[min_keep:]
                 ]
@@ -561,7 +593,9 @@ class HtmlCleaner:
                 element.decompose()
                 removed_count += 1
 
-        self.logger.info(f"Removed {removed_count} repeating structure elements")
+        self.logger.info(
+            f"Removed {removed_count} repeating structure elements"
+        )
         return soup
 
     def focus_on_main_content(self, soup):
@@ -585,12 +619,17 @@ class HtmlCleaner:
         for selector in main_content_selectors:
             try:
                 main_element = soup.select_one(selector)
-                if main_element and len(main_element.get_text(strip=True)) > 500:
-                    self.logger.info(f"Found main content using selector: {selector}")
+                if (
+                    main_element
+                    and len(main_element.get_text(strip=True)) > 500
+                ):
+                    self.logger.info(
+                        f"Found main content using selector: {selector}"
+                    )
                     # Create new soup with just the main content
                     new_soup = BeautifulSoup(str(main_element), "html.parser")
                     return new_soup
-            except:
+            except Exception:
                 continue
 
         # If no main content found, return body content
@@ -610,7 +649,6 @@ class HtmlCleaner:
 
             if len(option_tags) > max_options:
                 # Keep only the first max_options option tags
-                options_to_keep = option_tags[:max_options]
                 options_to_remove = option_tags[max_options:]
 
                 # Remove excess option tags
@@ -665,9 +703,9 @@ class HtmlCleaner:
                 # Be more selective - only keep if it seems functional
                 attrs = element.attrs
                 for attr_name in attrs:
-                    if attr_name.startswith("data-") and not attr_name.startswith(
-                        "data-testid"
-                    ):
+                    if attr_name.startswith(
+                        "data-"
+                    ) and not attr_name.startswith("data-testid"):
                         return True
                     if attr_name == "id" and not any(
                         x in str(attrs[attr_name]).lower()
@@ -902,7 +940,8 @@ class HtmlCleaner:
 
                     # Keep the data attribute if it matches useful patterns
                     if any(
-                        pattern in data_key.lower() for pattern in useful_data_patterns
+                        pattern in data_key.lower()
+                        for pattern in useful_data_patterns
                     ):
                         continue
 
@@ -932,7 +971,9 @@ class HtmlCleaner:
         try:
             if url:
                 parsed_url = urlparse(url)
-                domain = parsed_url.netloc.replace("www.", "").replace(".", "_")
+                domain = parsed_url.netloc.replace("www.", "").replace(
+                    ".", "_"
+                )
             else:
                 domain = "unknown"
 
@@ -978,7 +1019,9 @@ class HtmlCleaner:
         step2_html = str(soup)
         self.logger.info(f"Removed headers/footers. Length: {len(step2_html)}")
         if save_temp:
-            self._save_cleaned_html(url, step2_html, "02_removed_header_footer")
+            self._save_cleaned_html(
+                url, step2_html, "02_removed_header_footer"
+            )
 
         # Step 3: Focus on main content
         soup = self.focus_on_main_content(soup)
@@ -990,16 +1033,22 @@ class HtmlCleaner:
         # Step 4: Remove repeating structures (keep samples)
         soup = self.remove_repeating_structures(soup, min_keep=2, min_total=3)
         step4_html = str(soup)
-        self.logger.info(f"Removed repeating structures. Length: {len(step4_html)}")
+        self.logger.info(
+            f"Removed repeating structures. Length: {len(step4_html)}"
+        )
         if save_temp:
-            self._save_cleaned_html(url, step4_html, "04_removed_repeating_structures")
+            self._save_cleaned_html(
+                url, step4_html, "04_removed_repeating_structures"
+            )
 
         # Step 5: Limit select options to 2
         soup = self.limit_select_options(soup, max_options=2)
         step5_html = str(soup)
         self.logger.info(f"Limited select options. Length: {len(step5_html)}")
         if save_temp:
-            self._save_cleaned_html(url, step5_html, "05_limited_select_options")
+            self._save_cleaned_html(
+                url, step5_html, "05_limited_select_options"
+            )
 
         # Step 6: Remove empty divs recursively
         soup = self.remove_empty_divs_recursive(soup)
@@ -1011,7 +1060,9 @@ class HtmlCleaner:
         # Step 7: Remove non-essential HTML attributes
         soup = self.remove_non_essential_attributes(soup)
         step7_html = str(soup)
-        self.logger.info(f"Removed non-essential attributes. Length: {len(step7_html)}")
+        self.logger.info(
+            f"Removed non-essential attributes. Length: {len(step7_html)}"
+        )
         if save_temp:
             self._save_cleaned_html(url, step7_html, "07_removed_attributes")
 

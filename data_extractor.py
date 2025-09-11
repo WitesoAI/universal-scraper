@@ -1,8 +1,6 @@
 import json
 import logging
 import os
-import tempfile
-import sys
 import csv
 from datetime import datetime
 from urllib.parse import urlparse
@@ -43,7 +41,9 @@ class DataExtractor:
         if self.enable_cache:
             cache_db_path = os.path.join(temp_dir, "extraction_cache.db")
             cache_dir = os.path.join(temp_dir, "cache")
-            self.code_cache = CodeCache(db_path=cache_db_path, cache_dir=cache_dir)
+            self.code_cache = CodeCache(
+                db_path=cache_db_path, cache_dir=cache_dir
+            )
             self.logger.info("Code caching enabled")
         else:
             self.code_cache = None
@@ -56,7 +56,9 @@ class DataExtractor:
         self._initialize_ai_provider(api_key)
 
         self.extraction_history = []
-        self.logger.info(f"Initialized DataExtractor with model: {self.model_name}")
+        self.logger.info(
+            f"Initialized DataExtractor with model: {self.model_name}"
+        )
 
     def _initialize_ai_provider(self, api_key):
         """Initialize AI provider based on model name"""
@@ -71,23 +73,28 @@ class DataExtractor:
                 api_key = os.getenv("GEMINI_API_KEY")
                 if not api_key:
                     raise ValueError(
-                        "Gemini API key not provided. Set GEMINI_API_KEY environment variable or pass api_key parameter."
+                        "Gemini API key not provided. Set GEMINI_API_KEY "
+                        "environment variable or pass api_key parameter."
                     )
                 genai.configure(api_key=api_key)
 
             self.model = genai.GenerativeModel(self.model_name)
-            self.logger.info(f"Using Google Gemini API with model: {self.model_name}")
+            self.logger.info(
+                f"Using Google Gemini API with model: {self.model_name}"
+            )
         else:
             # Use LiteLLM for other providers
             if not LITELLM_AVAILABLE:
                 raise ImportError(
-                    "LiteLLM is required for non-Gemini models. Install with: pip install litellm"
+                    "LiteLLM is required for non-Gemini models. "
+                    "Install with: pip install litellm"
                 )
 
             if not api_key:
                 # For testing purposes, allow initialization without API key
                 self.logger.warning(
-                    "No API key provided for non-Gemini model - some operations will fail"
+                    "No API key provided for non-Gemini model - "
+                    "some operations will fail"
                 )
 
             self.use_litellm = True
@@ -100,7 +107,9 @@ class DataExtractor:
 
         if model_name_lower.startswith("gemini"):
             return "gemini"
-        elif model_name_lower.startswith("gpt") or "openai" in model_name_lower:
+        elif (
+            model_name_lower.startswith("gpt") or "openai" in model_name_lower
+        ):
             return "openai"
         elif model_name_lower.startswith("claude"):
             return "anthropic"
@@ -176,7 +185,15 @@ class DataExtractor:
             potential_data_patterns.append(f"Found {len(tables)} tables")
 
         # Check for cards/items (common class patterns)
-        card_patterns = ["card", "item", "post", "product", "job", "listing", "entry"]
+        card_patterns = [
+            "card",
+            "item",
+            "post",
+            "product",
+            "job",
+            "listing",
+            "entry",
+        ]
         for pattern in card_patterns:
             elements = soup.find_all(
                 class_=lambda x: x and pattern in " ".join(x).lower()
@@ -211,7 +228,7 @@ class DataExtractor:
                 return cached_code
 
         # Generate new code if not cached
-        analysis = self.analyze_html_structure(html_content)
+        self.analyze_html_structure(html_content)
 
         # Create field descriptions for the prompt
         field_descriptions = ", ".join(extraction_fields)
@@ -262,7 +279,7 @@ from datetime import datetime
 def extract_data(html_content):
     soup = BeautifulSoup(html_content, 'html.parser')
     extracted_data = []
-    
+
     try:
         # Your extraction logic here
         # Make sure to extract: {field_descriptions}
@@ -273,7 +290,9 @@ def extract_data(html_content):
         return []
 ```
 
-Remember: The HTML shown contains only SAMPLES of repeated elements. Your selectors must work for ALL instances in the full HTML. Focus on patterns and classes that will scale to the complete dataset.
+Remember: The HTML shown contains only SAMPLES of repeated elements.
+Your selectors must work for ALL instances in the full HTML. Focus on patterns
+and classes that will scale to the complete dataset.
 Only return the Python code, no explanations.
 HTML Content:
 ```{html_content}```
@@ -356,7 +375,9 @@ HTML Content:
         try:
             if url:
                 parsed_url = urlparse(url)
-                domain = parsed_url.netloc.replace("www.", "").replace(".", "_")
+                domain = parsed_url.netloc.replace("www.", "").replace(
+                    ".", "_"
+                )
             else:
                 domain = "unknown"
 
@@ -365,7 +386,9 @@ HTML Content:
             filepath = os.path.join(self.extraction_codes_dir, filename)
 
             with open(filepath, "w", encoding="utf-8") as f:
-                f.write(f"# Generated extraction code for: {url or 'Unknown URL'}\n")
+                f.write(
+                    f"# Generated extraction code for: {url or 'Unknown URL'}\n"
+                )
                 f.write(f"# Generated at: {datetime.now().isoformat()}\n\n")
                 f.write(code)
 
@@ -387,7 +410,9 @@ HTML Content:
         if not filename:
             if url:
                 parsed_url = urlparse(url)
-                domain = parsed_url.netloc.replace("www.", "").replace(".", "_")
+                domain = parsed_url.netloc.replace("www.", "").replace(
+                    ".", "_"
+                )
             else:
                 domain = "unknown"
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -460,7 +485,9 @@ HTML Content:
                     row = {field: item.get(field, "") for field in fieldnames}
                     writer.writerow(row)
 
-    def extract_and_save(self, html_content, url=None, output_file=None, format="json"):
+    def extract_and_save(
+        self, html_content, url=None, output_file=None, format="json"
+    ):
         """
         Main method to extract data from HTML and save to file
 
@@ -474,7 +501,9 @@ HTML Content:
             self.logger.info("Starting data extraction process...")
 
             # Generate BeautifulSoup code using Gemini
-            extraction_code = self.generate_beautifulsoup_code(html_content, url)
+            extraction_code = self.generate_beautifulsoup_code(
+                html_content, url
+            )
 
             # Store the generated code for debugging
             code_info = {
@@ -485,10 +514,14 @@ HTML Content:
             self.extraction_history.append(code_info)
 
             # Execute the generated code
-            extracted_data = self.execute_extraction_code(extraction_code, html_content)
+            extracted_data = self.execute_extraction_code(
+                extraction_code, html_content
+            )
 
             # Save the data
-            output_filename = self.save_data(extracted_data, output_file, url, format)
+            output_filename = self.save_data(
+                extracted_data, output_file, url, format
+            )
 
             # Save the generated code to temp folder
             code_filename = self._save_extraction_code(url, extraction_code)
@@ -502,7 +535,9 @@ HTML Content:
                 "data_file": output_filename,
                 "code_file": code_filename,
                 "extracted_items": (
-                    len(extracted_data) if isinstance(extracted_data, list) else 1
+                    len(extracted_data)
+                    if isinstance(extracted_data, list)
+                    else 1
                 ),
                 "extraction_code": extraction_code,
                 "format": format,
@@ -548,7 +583,9 @@ HTML Content:
             )
 
             # Execute the code
-            extracted_data = self.execute_extraction_code(extraction_code, html_content)
+            extracted_data = self.execute_extraction_code(
+                extraction_code, html_content
+            )
 
             return extracted_data
 
@@ -589,5 +626,7 @@ HTML Content:
             return extracted_data
 
         except Exception as e:
-            self.logger.error(f"Data extraction with separation failed: {str(e)}")
+            self.logger.error(
+                f"Data extraction with separation failed: {str(e)}"
+            )
             raise

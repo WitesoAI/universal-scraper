@@ -45,7 +45,9 @@ def scrape_ambitionbox_companies():
         # Scroll down to trigger lazy loading
         logger.info("Scrolling to trigger content loading...")
         for i in range(5):
-            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            driver.execute_script(
+                "window.scrollTo(0, document.body.scrollHeight);"
+            )
             time.sleep(2)
 
         # Wait for company content to appear (look for common patterns)
@@ -57,8 +59,6 @@ def scrape_ambitionbox_companies():
 
         # Parse with BeautifulSoup
         soup = BeautifulSoup(html, "html.parser")
-
-        companies = []
 
         # Strategy 1: Look for anchor tags that might be company links
         links = soup.find_all("a", href=True)
@@ -114,12 +114,20 @@ def scrape_ambitionbox_companies():
                 and len(text) < 300
                 and any(
                     keyword in text.lower()
-                    for keyword in ["rating", "reviews", "jobs", "salary", "interview"]
+                    for keyword in [
+                        "rating",
+                        "reviews",
+                        "jobs",
+                        "salary",
+                        "interview",
+                    ]
                 )
             ):
 
                 # Try to extract company name (usually the first significant text)
-                lines = [line.strip() for line in text.split("\n") if line.strip()]
+                lines = [
+                    line.strip() for line in text.split("\n") if line.strip()
+                ]
                 if lines:
                     company_name = lines[0]
                     if len(company_name) > 3 and len(company_name) < 100:
@@ -144,7 +152,13 @@ def scrape_ambitionbox_companies():
                 and len(text) < 200
                 and not any(
                     word in text.lower()
-                    for word in ["privacy", "terms", "cookie", "login", "signup"]
+                    for word in [
+                        "privacy",
+                        "terms",
+                        "cookie",
+                        "login",
+                        "signup",
+                    ]
                 )
             ):
 
@@ -159,7 +173,11 @@ def scrape_ambitionbox_companies():
                         "company",
                     ]
                 ):
-                    lines = [line.strip() for line in text.split("\n") if line.strip()]
+                    lines = [
+                        line.strip()
+                        for line in text.split("\n")
+                        if line.strip()
+                    ]
                     if lines:
                         company_name = lines[0]
                         structured_companies.append(
@@ -170,7 +188,9 @@ def scrape_ambitionbox_companies():
                             }
                         )
 
-        logger.info(f"Found {len(structured_companies)} structured company items")
+        logger.info(
+            f"Found {len(structured_companies)} structured company items"
+        )
 
         # Combine all results
         all_companies = company_links + company_cards + structured_companies

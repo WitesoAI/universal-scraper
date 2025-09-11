@@ -59,7 +59,11 @@ def scrape_multiple_urls(urls_file, scraper, output_dir, format_type="json"):
         return False
 
     with open(urls_file, "r") as f:
-        urls = [line.strip() for line in f if line.strip() and not line.startswith("#")]
+        urls = [
+            line.strip()
+            for line in f
+            if line.strip() and not line.startswith("#")
+        ]
 
     if not urls:
         print(f"❌ No valid URLs found in {urls_file}")
@@ -70,21 +74,25 @@ def scrape_multiple_urls(urls_file, scraper, output_dir, format_type="json"):
     # Ensure output directory exists
     os.makedirs(output_dir, exist_ok=True)
 
-    results = scraper.scrape_multiple_urls(urls, save_to_files=True, format=format_type)
+    results = scraper.scrape_multiple_urls(
+        urls, save_to_files=True, format=format_type
+    )
 
     successful = sum(1 for r in results if not r.get("error"))
     failed = len(results) - successful
 
-    print(f"\n📊 Batch scraping completed:")
+    print("\n📊 Batch scraping completed:")
     print(f"✅ Successful: {successful}")
     print(f"❌ Failed: {failed}")
-    print(f"📁 Results saved to: output directory")
+    print("📁 Results saved to: output directory")
 
     if failed > 0:
         print("\n❌ Failed URLs:")
         for result in results:
             if result.get("error"):
-                print(f"  - {result['url']}: {result.get('error', 'Unknown error')}")
+                print(
+                    f"  - {result['url']}: {result.get('error', 'Unknown error')}"
+                )
         return False
 
     return True
@@ -119,7 +127,9 @@ Multi-Provider Support:
     )
 
     # Output options
-    parser.add_argument("--output", "-o", help="Output filename for extracted data")
+    parser.add_argument(
+        "--output", "-o", help="Output filename for extracted data"
+    )
     parser.add_argument(
         "--output-dir",
         default="output",
@@ -154,14 +164,18 @@ Multi-Provider Support:
     parser.add_argument(
         "--verbose", "-v", action="store_true", help="Enable verbose logging"
     )
-    parser.add_argument("--quiet", "-q", action="store_true", help="Minimal output")
+    parser.add_argument(
+        "--quiet", "-q", action="store_true", help="Minimal output"
+    )
 
     # Legacy support
     parser.add_argument(
         "--gemini-key", help="Gemini API key (deprecated, use --api-key)"
     )
     parser.add_argument(
-        "--temp-dir", default="temp", help="Temporary directory (default: temp)"
+        "--temp-dir",
+        default="temp",
+        help="Temporary directory (default: temp)",
     )
     parser.add_argument("--save-html", help="Save cleaned HTML to this file")
 
@@ -221,9 +235,13 @@ Multi-Provider Support:
             )
 
             if not result.get("error"):
-                print(f"\n✅ Scraping completed successfully!")
-                print(f"📄 Data saved to: {result.get('saved_to', output_filename)}")
-                print(f"📊 Items extracted: {result['metadata']['items_extracted']}")
+                print("\n✅ Scraping completed successfully!")
+                print(
+                    f"📄 Data saved to: {result.get('saved_to', output_filename)}"
+                )
+                print(
+                    f"📊 Items extracted: {result['metadata']['items_extracted']}"
+                )
                 print(
                     f"🗜️ HTML size reduction: {len(result['metadata']) - result['metadata']['cleaned_html_length']}"
                 )
@@ -231,16 +249,20 @@ Multi-Provider Support:
                 # Save cleaned HTML if requested
                 if args.save_html:
                     # This would require modifying scraper to return cleaned HTML
-                    print(f"💾 Cleaned HTML would be saved to: {args.save_html}")
+                    print(
+                        f"💾 Cleaned HTML would be saved to: {args.save_html}"
+                    )
 
                 sys.exit(0)
             else:
-                print(f"\n❌ Scraping failed: {result.get('error', 'Unknown error')}")
+                print(
+                    f"\n❌ Scraping failed: {result.get('error', 'Unknown error')}"
+                )
                 sys.exit(1)
 
         elif args.urls:
             # Multiple URLs scraping
-            print(f"📋 Batch scraping mode")
+            print("📋 Batch scraping mode")
             print(f"📁 Output directory: {args.output_dir}")
             print(f"📄 Output format: {args.format.upper()}")
 
@@ -249,10 +271,10 @@ Multi-Provider Support:
             )
 
             if success:
-                print(f"\n✅ Batch scraping completed successfully!")
+                print("\n✅ Batch scraping completed successfully!")
                 sys.exit(0)
             else:
-                print(f"\n❌ Batch scraping completed with errors!")
+                print("\n❌ Batch scraping completed with errors!")
                 sys.exit(1)
 
     except KeyboardInterrupt:

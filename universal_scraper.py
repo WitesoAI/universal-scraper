@@ -20,7 +20,6 @@ from urllib.parse import urlparse
 from html_fetcher import HtmlFetcher
 from html_cleaner import HtmlCleaner
 from data_extractor import DataExtractor
-import google.generativeai as genai
 
 try:
     from litellm import completion
@@ -191,14 +190,18 @@ class UniversalScraper:
                     "raw_html_length": len(raw_html),
                     "cleaned_html_length": len(cleaned_html),
                     "items_extracted": (
-                        len(extracted_data) if isinstance(extracted_data, list) else 1
+                        len(extracted_data)
+                        if isinstance(extracted_data, list)
+                        else 1
                     ),
                 },
             }
 
             # Optionally save to file
             if save_to_file:
-                filename = output_filename or self._generate_filename(url, format)
+                filename = output_filename or self._generate_filename(
+                    url, format
+                )
                 filepath = self._save_data(result, filename, format)
                 result["saved_to"] = filepath
 
@@ -229,7 +232,9 @@ class UniversalScraper:
             self.logger.info(f"Processing URL {i}/{len(urls)}: {url}")
 
             try:
-                result = self.scrape_url(url, save_to_file=save_to_files, format=format)
+                result = self.scrape_url(
+                    url, save_to_file=save_to_files, format=format
+                )
                 results.append(result)
             except Exception as e:
                 self.logger.error(f"Failed to scrape {url}: {str(e)}")
@@ -405,7 +410,9 @@ class CustomDataExtractor(DataExtractor):
         model_name=None,
         enable_cache=True,
     ):
-        super().__init__(api_key, temp_dir, output_dir, model_name, enable_cache)
+        super().__init__(
+            api_key, temp_dir, output_dir, model_name, enable_cache
+        )
         self.fields = fields or [
             "company_name",
             "job_title",
@@ -431,7 +438,9 @@ class CustomDataExtractor(DataExtractor):
             self.logger.error(f"Data extraction failed: {str(e)}")
             raise
 
-    def extract_data_with_separation(self, cleaned_html, original_html, url=None):
+    def extract_data_with_separation(
+        self, cleaned_html, original_html, url=None
+    ):
         """Extract data using cleaned HTML for code generation and original HTML for execution"""
         try:
             return super().extract_data_with_separation(
@@ -471,7 +480,6 @@ def scrape(
 # Example usage
 if __name__ == "__main__":
     # Example of how to use the module
-    import os
 
     # Initialize scraper - will auto-detect model based on available API keys
     api_key = (
@@ -489,14 +497,18 @@ if __name__ == "__main__":
     scraper = UniversalScraper(api_key=api_key, model_name="gemini-2.5-flash")
 
     # Set custom fields
-    scraper.set_fields(["company_name", "job_title", "apply_link", "salary_range"])
+    scraper.set_fields(
+        ["company_name", "job_title", "apply_link", "salary_range"]
+    )
 
     # Check current model
     print(f"Using model: {scraper.get_model_name()}")
 
     # Scrape a URL
     try:
-        result = scraper.scrape_url("https://example.com/jobs", save_to_file=True)
+        result = scraper.scrape_url(
+            "https://example.com/jobs", save_to_file=True
+        )
         print(
             f"Successfully scraped data: {result['metadata']['items_extracted']} items"
         )
