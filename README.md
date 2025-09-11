@@ -163,6 +163,13 @@ Here's a real working example showing Universal Scraper in action with OpenAI GP
 6. **117 Laptop Products Extracted** from original HTML with complete data
 7. **Saved as CSV** ready for analysis with all specified product fields
 
+**🔥 Token Count Comparison (Claude Sonnet 4):**
+
+- 2,619 tokens: ~$0.00786 (0.8 cents)
+- 150,742 tokens: ~$0.45 (45 cents)
+- Token ratio: 150,742 ÷ 2,619 = **57.5x more tokens**
+- Saving: The larger request costs **57.5x** more than the smaller one
+
 ## How It Works
 
 1. **HTML Fetching**: Uses cloudscraper or selenium to fetch HTML content, handling anti-bot measures
