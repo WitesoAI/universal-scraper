@@ -96,8 +96,16 @@ graph TB
 **Key Performance Benefits:**
 - 🚀 **98% HTML Size Reduction** → Massive token savings
 - ⚡ **Smart Caching** → 90%+ API cost reduction on repeat scraping  
-- 🤖 **Multi-Provider Support** → Choose the best AI for your use case
-- 🔄 **Dual HTML Processing** → Clean HTML for AI analysis, original HTML for complete data extraction
+- 🤖 **Multi-Provider Support** → Choose the best AI for your use case, 100+ LLMs supported
+- 🔄 **Dual HTML Processing** → Clean HTML and reduces HTML size upto 98.3%+ for AI analysis, original HTML for complete data extraction
+- 🔄 **Generates BeautifulSoup4 code on the fly** → Generates structural hash of HTML page, so that it reuse extraction code on repeat scraping
+
+**🔥 Token Count Comparison (Claude Sonnet 4):**
+
+- 2,619 tokens: ~$0.00786 (0.8 cents)
+- 150,742 tokens: ~$0.45 (45 cents)
+- Token ratio: 150,742 ÷ 2,619 = **57.5x more tokens**
+- Saving: The larger request costs **57.5x** more than the smaller one
 
 ## 💻 Live Working Example
 
@@ -162,13 +170,6 @@ Here's a real working example showing Universal Scraper in action with Gemini 2.
 5. **Code Cached** for future use (90% cost savings on re-runs)
 6. **117 Laptop Products Extracted** from original HTML with complete data
 7. **Saved as CSV** ready for analysis with all specified product fields
-
-**🔥 Token Count Comparison (Claude Sonnet 4):**
-
-- 2,619 tokens: ~$0.00786 (0.8 cents)
-- 150,742 tokens: ~$0.45 (45 cents)
-- Token ratio: 150,742 ÷ 2,619 = **57.5x more tokens**
-- Saving: The larger request costs **57.5x** more than the smaller one
 
 ## How It Works
 
