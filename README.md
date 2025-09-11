@@ -101,7 +101,7 @@ graph TB
 
 ## 💻 Live Working Example
 
-Here's a real working example showing Universal Scraper in action with OpenAI GPT-4o:
+Here's a real working example showing Universal Scraper in action with Gemini 2.5 Pro:
 
 ```python
 >>> from universal_scraper import UniversalScraper
