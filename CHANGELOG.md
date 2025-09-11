@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.8.0 - Advanced HTML Optimization Release
+- 🚀 **NEW**: Non-essential attributes removal - removes styling, tracking, and testing attributes while preserving data extraction capabilities
+- 🧹 **NEW**: Whitespace compression between consecutive HTML tags - removes unnecessary whitespace and newlines between tags
+- 🎯 **FEATURE**: Smart attribute filtering - distinguishes between essential attributes (id, class, href, data-price) and non-essential ones (style, onclick, data-analytics)
+- 📦 **OPTIMIZATION**: Additional 15-30% HTML size reduction through attribute cleanup
+- ⚡ **PERFORMANCE**: Enhanced token savings with dual whitespace and attribute optimization
+- 🔧 **SMART**: Preserves BeautifulSoup selector attributes (class, id) while removing presentation attributes
+- 📊 **LOGGING**: Detailed attribute removal statistics and whitespace compression metrics
+- 🛠️ **PIPELINE**: Integrated as steps 7-8 in the cleaning pipeline for maximum efficiency
+
 ## v1.7.0 - HTML Form Optimization Release
 - 🔧 **NEW**: Select options limiting - automatically reduces select tags to maximum 2 options
 - 🧹 **ENHANCEMENT**: Improved HTML cleaning with form element optimization

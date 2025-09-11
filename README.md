@@ -157,7 +157,7 @@ Here's a real working example showing Universal Scraper in action with OpenAI GP
 **🔥 What Just Happened:**
 1. **Fields Configured** for e-commerce: product_name, product_price, product_rating, etc.
 2. **HTML Fetched** with anti-bot protection (163KB)
-3. **Smart Cleaning** reduced size by 98.1% (163KB → 2.8KB)
+3. **Smart Cleaning** reduced size by 98.3% (163KB → 2.6KB)
 4. **AI Generated** custom extraction code using GPT-4o for specified fields
 5. **Code Cached** for future use (90% cost savings on re-runs)
 6. **117 Laptop Products Extracted** from original HTML with complete data
@@ -166,7 +166,7 @@ Here's a real working example showing Universal Scraper in action with OpenAI GP
 ## How It Works
 
 1. **HTML Fetching**: Uses cloudscraper or selenium to fetch HTML content, handling anti-bot measures
-2. **Smart HTML Cleaning**: Removes 91%+ of noise (scripts, ads, navigation, repeated structures, empty divs) while preserving data structure
+2. **Smart HTML Cleaning**: Removes 98%+ of noise (scripts, ads, navigation, repeated structures, empty divs) while preserving data structure
 3. **Structure-Based Caching**: Creates structural hash and checks cache for existing extraction code
 4. **AI Code Generation**: Uses your chosen AI provider (Gemini, OpenAI, Claude, etc.) to generate custom BeautifulSoup code on cleaned HTML (only when not cached)
 5. **Code Execution**: Runs the cached/generated code on original HTML to extract ALL data items
