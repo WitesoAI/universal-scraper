@@ -19,6 +19,112 @@ class HtmlCleaner:
         self.footer_tags = ['footer']
         self.noise_tags = ['script', 'style', 'meta', 'link', 'noscript']
         
+        # Non-essential attributes that can be safely removed without affecting data extraction
+        self.remove_attributes = [
+            # Styling and presentation (but NOT class/id - they're needed for BS4 selectors)
+            'style',
+            
+            # JavaScript event handlers
+            'onclick', 'onload', 'onerror', 'onmouseover', 'onmouseout', 'onmousedown', 'onmouseup',
+            'onfocus', 'onblur', 'onchange', 'onsubmit', 'onreset', 'onkeydown', 'onkeyup', 'onkeypress',
+            'ondblclick', 'oncontextmenu', 'onwheel', 'ondrag', 'ondrop', 'ondragover', 'ondragenter',
+            'ondragleave', 'ondragstart', 'ondragend', 'onscroll', 'onresize', 'onselect',
+            
+            # Analytics and tracking
+            'data-analytics', 'data-tracking', 'data-ga', 'data-gtm', 'data-fb', 'data-pixel',
+            'data-track', 'data-event', 'data-label', 'data-category', 'data-action',
+            'data-google-analytics', 'data-mixpanel', 'data-segment', 'data-amplitude',
+            
+            # Testing and debugging
+            'data-testid', 'data-test', 'data-cy', 'data-selenium', 'data-qa', 'data-automation',
+            'data-e2e', 'data-test-id', 'data-jest', 'data-playwright',
+            
+            # Accessibility (only non-essential ones)
+            'aria-describedby', 'aria-labelledby', 'aria-controls', 'aria-owns',
+            'aria-flowto', 'aria-activedescendant', 'aria-details',
+            
+            # Interaction and usability (non-essential)
+            'tabindex', 'accesskey', 'draggable', 'spellcheck', 'contenteditable',
+            'autocomplete', 'autocapitalize', 'autocorrect',
+            
+            # Layout and positioning (CSS-related)
+            'align', 'valign', 'bgcolor', 'background', 'border', 'cellpadding', 'cellspacing',
+            'width', 'height', 'size', 'color', 'face', 'clear',
+            
+            # Meta information (SEO/social)
+            'data-description', 'data-keywords', 'data-author', 'data-copyright',
+            'data-og-', 'data-twitter-', 'data-fb-', 'data-linkedin-',
+            
+            # Framework/library specific (non-essential)
+            'data-react', 'data-vue', 'data-angular', 'data-ember', 'data-backbone',
+            'ng-', 'v-', 'x-data', 'x-show', 'x-if', 'alpine-',
+            
+            # Performance and loading
+            'loading', 'decoding', 'fetchpriority', 'referrerpolicy',
+            
+            # Form validation styling
+            'data-valid', 'data-invalid', 'data-error', 'data-success',
+            
+            # Animation and transition
+            'data-animate', 'data-animation', 'data-transition', 'data-duration',
+            'data-delay', 'data-ease',
+            
+            # Theme and appearance
+            'data-theme', 'data-mode', 'data-variant', 'data-color-scheme',
+            
+            # Tooltip and popover positioning
+            'data-placement', 'data-offset', 'data-boundary', 'data-flip',
+            
+            # Security (non-essential)
+            'crossorigin', 'integrity', 'nonce'
+        ]
+        
+        # Essential attributes that should NEVER be removed (critical for data extraction and BS4 selectors)
+        self.essential_attributes = {
+            # Core content attributes and selectors
+            'id', 'class', 'name', 'value', 'content', 'text', 'innerHTML', 'innerText',
+            
+            # Links and navigation
+            'href', 'src', 'action', 'target', 'download',
+            
+            # Form data
+            'type', 'placeholder', 'required', 'disabled', 'readonly', 'checked', 'selected',
+            'multiple', 'accept', 'pattern', 'min', 'max', 'step', 'minlength', 'maxlength',
+            
+            # Essential meta information
+            'title', 'alt', 'lang', 'charset', 'encoding',
+            
+            # Data attributes that might contain extractable data
+            'data-price', 'data-value', 'data-id', 'data-name', 'data-title', 'data-url',
+            'data-date', 'data-time', 'data-location', 'data-phone', 'data-email',
+            'data-rating', 'data-review', 'data-count', 'data-quantity', 'data-amount',
+            'data-currency', 'data-status', 'data-category', 'data-type', 'data-brand',
+            'data-model', 'data-sku', 'data-description', 'data-summary',
+            
+            # Essential accessibility (content-related)
+            'aria-label', 'aria-hidden', 'aria-expanded', 'aria-selected', 'aria-checked',
+            'aria-pressed', 'aria-current', 'aria-live', 'aria-atomic', 'role',
+            
+            # Media attributes
+            'controls', 'autoplay', 'loop', 'muted', 'poster', 'preload',
+            
+            # Table structure
+            'colspan', 'rowspan', 'headers', 'scope',
+            
+            # List structure
+            'start', 'reversed',
+            
+            # Essential form attributes
+            'for', 'form', 'method', 'enctype', 'novalidate',
+            
+            # Common selector attributes used in BeautifulSoup
+            'rel', 'property', 'itemprop', 'itemtype', 'itemscope',
+            
+            # Custom data attributes commonly used for content identification
+            'data-role', 'data-component', 'data-module', 'data-section',
+            'data-element', 'data-widget', 'data-container'
+        }
+        
     def remove_noise(self, soup):
         """Remove script tags, styles, comments and other noise"""
         # Remove script and style elements
@@ -461,6 +567,96 @@ class HtmlCleaner:
         
         return final_html
     
+    def remove_non_essential_attributes(self, soup):
+        """
+        Remove non-essential HTML attributes that don't affect data extraction.
+        
+        This method removes styling, tracking, testing, and other non-content attributes
+        while preserving all attributes that might contain extractable data.
+        
+        Args:
+            soup: BeautifulSoup object
+            
+        Returns:
+            BeautifulSoup object with non-essential attributes removed
+        """
+        removed_count = 0
+        total_attributes_before = 0
+        
+        # Get all elements with attributes
+        all_elements = soup.find_all(lambda tag: tag.attrs)
+        
+        for element in all_elements:
+            if not element.attrs:
+                continue
+                
+            original_attrs = dict(element.attrs)
+            total_attributes_before += len(original_attrs)
+            attributes_to_remove = []
+            
+            for attr_name in original_attrs:
+                # Skip if it's an essential attribute
+                if attr_name in self.essential_attributes:
+                    continue
+                
+                # Check for exact matches
+                if attr_name in self.remove_attributes:
+                    attributes_to_remove.append(attr_name)
+                    continue
+                
+                # Check for pattern matches (like data-* attributes)
+                should_remove = False
+                for remove_pattern in self.remove_attributes:
+                    if remove_pattern.endswith('-') and attr_name.startswith(remove_pattern):
+                        # Handle patterns like 'data-og-', 'ng-', etc.
+                        should_remove = True
+                        break
+                
+                if should_remove:
+                    attributes_to_remove.append(attr_name)
+                    continue
+                
+                # Special handling for data attributes - be more selective
+                if attr_name.startswith('data-'):
+                    # Check if it's a data attribute that might contain useful content
+                    data_key = attr_name[5:]  # Remove 'data-' prefix
+                    
+                    # Keep data attributes that are likely to contain extractable content
+                    useful_data_patterns = [
+                        'price', 'value', 'id', 'name', 'title', 'url', 'link', 'href',
+                        'date', 'time', 'location', 'address', 'phone', 'email', 'contact',
+                        'rating', 'review', 'score', 'count', 'quantity', 'amount', 'number',
+                        'currency', 'cost', 'fee', 'discount', 'sale', 'offer',
+                        'status', 'state', 'condition', 'availability', 'stock',
+                        'category', 'type', 'tag', 'genre', 'classification',
+                        'brand', 'model', 'sku', 'product', 'item', 'article',
+                        'description', 'summary', 'content', 'text', 'body',
+                        'author', 'creator', 'publisher', 'source',
+                        'size', 'dimension', 'weight', 'length', 'width', 'height',
+                        'color', 'material', 'specification', 'feature'
+                    ]
+                    
+                    # Keep the data attribute if it matches useful patterns
+                    if any(pattern in data_key.lower() for pattern in useful_data_patterns):
+                        continue
+                
+                # If we get here, check if it's in our removal list
+                if attr_name in self.remove_attributes:
+                    attributes_to_remove.append(attr_name)
+            
+            # Remove the identified attributes
+            for attr_name in attributes_to_remove:
+                if attr_name in element.attrs:
+                    del element.attrs[attr_name]
+                    removed_count += 1
+        
+        total_attributes_after = sum(len(el.attrs) for el in soup.find_all(lambda tag: tag.attrs))
+        
+        self.logger.info(f"Removed {removed_count} non-essential attributes "
+                        f"({total_attributes_before} → {total_attributes_after})")
+        
+        return soup
+    
     def _save_cleaned_html(self, url, html_content, stage):
         """Save cleaned HTML at different stages to temp folder for debugging"""
         try:
@@ -492,7 +688,8 @@ class HtmlCleaner:
         4. Remove repeating structures (keep samples)
         5. Limit select tags to 2 option tags
         6. Remove empty div elements recursively
-        7. Remove whitespace and newlines between consecutive tags
+        7. Remove non-essential HTML attributes
+        8. Remove whitespace and newlines between consecutive tags
         """
         self.logger.info("Starting HTML cleaning process...")
         
@@ -541,15 +738,22 @@ class HtmlCleaner:
         if save_temp:
             self._save_cleaned_html(url, step6_html, "06_removed_empty_divs")
         
-        # Step 7: Remove whitespace between consecutive tags
-        step7_html = self.remove_whitespace_between_tags(step6_html)
+        # Step 7: Remove non-essential HTML attributes
+        soup = self.remove_non_essential_attributes(soup)
+        step7_html = str(soup)
+        self.logger.info(f"Removed non-essential attributes. Length: {len(step7_html)}")
         if save_temp:
-            self._save_cleaned_html(url, step7_html, "07_removed_whitespace")
+            self._save_cleaned_html(url, step7_html, "07_removed_attributes")
         
-        final_html = step7_html
+        # Step 8: Remove whitespace between consecutive tags
+        step8_html = self.remove_whitespace_between_tags(step7_html)
+        if save_temp:
+            self._save_cleaned_html(url, step8_html, "08_removed_whitespace")
+        
+        final_html = step8_html
         final_length = len(final_html)
         if save_temp:
-            self._save_cleaned_html(url, final_html, "08_final_cleaned")
+            self._save_cleaned_html(url, final_html, "09_final_cleaned")
         
         self.logger.info(f"HTML cleaning completed. Original: {original_length}, Final: {final_length}")
         self.logger.info(f"Reduction: {((original_length - final_length) / original_length * 100):.1f}%")
