@@ -421,6 +421,46 @@ class HtmlCleaner:
         self.logger.info(f"Removed {total_removed} empty div elements in {iteration} iterations")
         return soup
     
+    def remove_whitespace_between_tags(self, html_content):
+        """
+        Remove whitespace and newlines only between consecutive tags while preserving 
+        text content within tags. This compresses the HTML size without affecting 
+        the actual content.
+        
+        Args:
+            html_content (str): HTML content as string
+            
+        Returns:
+            str: HTML with whitespace between tags removed
+        """
+        original_length = len(html_content)
+        
+        # Use regex to remove whitespace between closing tag and opening tag
+        # Pattern explanation:
+        # (>\s+<) matches: > followed by one or more whitespace chars followed by <
+        # Replace with: ><
+        cleaned_html = re.sub(r'>\s+<', '><', html_content)
+        
+        # Also remove leading/trailing whitespace from lines but preserve content structure
+        lines = cleaned_html.split('\n')
+        cleaned_lines = []
+        
+        for line in lines:
+            stripped_line = line.strip()
+            if stripped_line:  # Only keep non-empty lines
+                cleaned_lines.append(stripped_line)
+        
+        # Join lines without extra newlines
+        final_html = ''.join(cleaned_lines)
+        
+        final_length = len(final_html)
+        reduction_percent = ((original_length - final_length) / original_length * 100) if original_length > 0 else 0
+        
+        self.logger.info(f"Removed whitespace between tags. Length: {original_length} → {final_length} "
+                        f"({reduction_percent:.1f}% reduction)")
+        
+        return final_html
+    
     def _save_cleaned_html(self, url, html_content, stage):
         """Save cleaned HTML at different stages to temp folder for debugging"""
         try:
@@ -452,6 +492,7 @@ class HtmlCleaner:
         4. Remove repeating structures (keep samples)
         5. Limit select tags to 2 option tags
         6. Remove empty div elements recursively
+        7. Remove whitespace and newlines between consecutive tags
         """
         self.logger.info("Starting HTML cleaning process...")
         
@@ -500,10 +541,15 @@ class HtmlCleaner:
         if save_temp:
             self._save_cleaned_html(url, step6_html, "06_removed_empty_divs")
         
-        final_html = str(soup)
+        # Step 7: Remove whitespace between consecutive tags
+        step7_html = self.remove_whitespace_between_tags(step6_html)
+        if save_temp:
+            self._save_cleaned_html(url, step7_html, "07_removed_whitespace")
+        
+        final_html = step7_html
         final_length = len(final_html)
         if save_temp:
-            self._save_cleaned_html(url, final_html, "07_final_cleaned")
+            self._save_cleaned_html(url, final_html, "08_final_cleaned")
         
         self.logger.info(f"HTML cleaning completed. Original: {original_length}, Final: {final_length}")
         self.logger.info(f"Reduction: {((original_length - final_length) / original_length * 100):.1f}%")
