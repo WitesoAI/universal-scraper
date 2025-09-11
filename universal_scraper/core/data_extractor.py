@@ -6,7 +6,7 @@ from datetime import datetime
 from urllib.parse import urlparse
 import google.generativeai as genai
 from bs4 import BeautifulSoup
-from code_cache import CodeCache
+from .code_cache import CodeCache
 
 try:
     from litellm import completion

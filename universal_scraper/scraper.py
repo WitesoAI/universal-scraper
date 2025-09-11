@@ -19,9 +19,9 @@ from typing import List, Dict, Any, Optional
 from datetime import datetime
 from urllib.parse import urlparse
 
-from html_fetcher import HtmlFetcher
-from html_cleaner import HtmlCleaner
-from data_extractor import DataExtractor
+from .core.html_fetcher import HtmlFetcher
+from .core.html_cleaner import HtmlCleaner
+from .core.data_extractor import DataExtractor
 
 try:
     from litellm import completion

@@ -2,7 +2,7 @@
 Setup script for Universal Scraper package
 """
 
-from setuptools import setup
+from setuptools import setup, find_packages
 import os
 
 # Read the contents of README file
@@ -34,15 +34,8 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/WitesoAI/universal-scraper",
-    py_modules=[
-        "universal_scraper",
-        "html_fetcher",
-        "html_cleaner",
-        "data_extractor",
-        "code_cache",
-        "custom_scraper",
-        "main",
-    ],
+    packages=find_packages(),
+    py_modules=["main"],
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",

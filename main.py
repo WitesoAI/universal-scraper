@@ -21,7 +21,7 @@ import sys
 from datetime import datetime
 from urllib.parse import urlparse
 
-from universal_scraper import UniversalScraper
+from universal_scraper.scraper import UniversalScraper
 
 
 def setup_logging(level):

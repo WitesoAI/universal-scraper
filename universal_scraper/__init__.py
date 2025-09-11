@@ -5,7 +5,7 @@ This module provides an easy-to-use interface for scraping web content
 and extracting structured data using AI.
 """
 
-from .universal_scraper import UniversalScraper, scrape
+from .scraper import UniversalScraper, scrape
 
 __version__ = "1.8.0"
 __author__ = "Ayushi Gupta & Pushpender Singh"
