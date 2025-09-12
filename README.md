@@ -180,7 +180,7 @@ Here's a real working example showing Universal Scraper in action with Gemini 2.
 3. **Structure-Based Caching**: Creates structural hash and checks cache for existing extraction code
 4. **AI Code Generation**: Uses your chosen AI provider (Gemini, OpenAI, Claude, etc.) to generate custom BeautifulSoup code on cleaned HTML (only when not cached)
 5. **Code Execution**: Runs the cached/generated code on original HTML to extract ALL data items
-6. **JSON Output**: Returns complete, structured data with metadata and performance stats
+6. **Export Output data as Json/CSV**: Returns complete, structured data with metadata and performance stats
 
 ## Features
 
@@ -192,7 +192,7 @@ Here's a real working example showing Universal Scraper in action with Gemini 2.
 - 📦 **Modular Design**: Built with clean, modular components
 - 🛡️ **Robust**: Handles edge cases, missing data, and various HTML structures
 - 💾 **Multiple Output Formats**: Support for both JSON (default) and CSV export formats
-- 📊 **Structured Output**: Clean, structured data output with comprehensive metadata
+- 📊 **Structured Output**: Always returns consistent, clean & structured data output with comprehensive metadata
 
 ## 🧹 Smart HTML Cleaner
 
@@ -204,16 +204,16 @@ Here's a real working example showing Universal Scraper in action with Gemini 2.
 - **Empty Elements**: Recursively removes empty div elements that don't contain meaningful content
 - **Noise**: Comments, unnecessary attributes, and whitespace
 
-### Repeating Structure Reduction (NEW!)
-The cleaner now intelligently detects and reduces repeated HTML structures:
+### Repeating Structure Reduction
+The cleaner intelligently detects and reduces repeated HTML structures:
 
 - **Pattern Detection**: Uses structural hashing + similarity algorithms to find repeated elements
 - **Smart Sampling**: Keeps 2 samples from groups of 3+ similar structures (e.g., 20 job cards → 2 samples)
 - **Structure Preservation**: Maintains document flow and parent-child relationships
 - **AI Optimization**: Provides enough samples for pattern recognition without overwhelming the AI
 
-### Empty Element Removal (NEW!)
-The cleaner now intelligently removes empty div elements:
+### Empty Element Removal
+The cleaner intelligently removes empty div elements:
 
 - **Recursive Processing**: Starts from innermost divs and works outward
 - **Content Detection**: Preserves divs with text, images, inputs, or interactive elements
