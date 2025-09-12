@@ -16,25 +16,25 @@
 
 ## Table of Contents
 
-- [🔄 How Universal Scraper Works](#-how-universal-scraper-works)
-- [💻 Live Working Example](#-live-working-example)
+- [How Universal Scraper Works](#-how-universal-scraper-works)
+- [Live Working Example](#-live-working-example)
 - [How It Works](#how-it-works)
 - [Features](#features)
-- [🧹 Smart HTML Cleaner](#-smart-html-cleaner)
+- [Smart HTML Cleaner](#-smart-html-cleaner)
 - [Installation (Recommended)](#installation-recommended)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
   - [1. Set up your API key](#1-set-up-your-api-key)
   - [2. Basic Usage](#2-basic-usage)
   - [3. Convenience Function](#3-convenience-function)
-- [📁 Export Formats](#-export-formats)
+- [Export Formats](#-export-formats)
 - [CLI Usage](#cli-usage)
 - [Cache Management](#cache-management)
 - [Advanced Usage](#advanced-usage)
 - [API Reference](#api-reference)
 - [Output Format](#output-format)
 - [Common Field Examples](#common-field-examples)
-- [🤖 Multi-Provider AI Support](#-multi-provider-ai-support)
+- [Multi-Provider AI Support](#-multi-provider-ai-support)
 - [Troubleshooting](#troubleshooting)
 - [Roadmap](#roadmap)
 - [Core Contributors](#core-contributors)
@@ -46,7 +46,7 @@
 
 A Python module for AI-powered web scraping with customizable field extraction using multiple AI providers (Gemini, OpenAI, Anthropic, and more via LiteLLM).
 
-## 🔄 How Universal Scraper Works
+## How Universal Scraper Works
 
 ```mermaid
 graph TB
