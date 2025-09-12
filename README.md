@@ -16,25 +16,25 @@
 
 ## Table of Contents
 
-- [How Universal Scraper Works](#-how-universal-scraper-works)
-- [Live Working Example](#-live-working-example)
+- [How Universal Scraper Works](#how-universal-scraper-works)
+- [Live Working Example](#live-working-example)
 - [How It Works](#how-it-works)
 - [Features](#features)
-- [Smart HTML Cleaner](#-smart-html-cleaner)
+- [Smart HTML Cleaner](#smart-html-cleaner)
 - [Installation (Recommended)](#installation-recommended)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
   - [1. Set up your API key](#1-set-up-your-api-key)
   - [2. Basic Usage](#2-basic-usage)
   - [3. Convenience Function](#3-convenience-function)
-- [Export Formats](#-export-formats)
+- [Export Formats](#export-formats)
 - [CLI Usage](#cli-usage)
 - [Cache Management](#cache-management)
 - [Advanced Usage](#advanced-usage)
 - [API Reference](#api-reference)
 - [Output Format](#output-format)
 - [Common Field Examples](#common-field-examples)
-- [Multi-Provider AI Support](#-multi-provider-ai-support)
+- [Multi-Provider AI Support](#multi-provider-ai-support)
 - [Troubleshooting](#troubleshooting)
 - [Roadmap](#roadmap)
 - [Core Contributors](#core-contributors)
@@ -111,7 +111,7 @@ graph TB
 - Token ratio: 150,742 ÷ 2,619 = **57.5x more tokens**
 - Saving: The larger request costs **57.5x** more than the smaller one
 
-## 💻 Live Working Example
+## Live Working Example
 
 Here's a real working example showing Universal Scraper in action with Gemini 2.5 Pro:
 
@@ -196,7 +196,7 @@ Here's a real working example showing Universal Scraper in action with Gemini 2.
 - 💾 **Multiple Output Formats**: Support for both JSON (default) and CSV export formats
 - 📊 **Structured Output**: Always returns consistent, clean & structured data output with comprehensive metadata
 
-## 🧹 Smart HTML Cleaner
+## Smart HTML Cleaner
 
 ### What Gets Removed
 - **Scripts & Styles**: JavaScript, CSS, and style blocks
@@ -367,7 +367,7 @@ data = scrape(
 print(data['data'])  # The extracted data
 ```
 
-## 📁 Export Formats
+## Export Formats
 
 Universal Scraper supports multiple output formats to suit your data processing needs:
 
@@ -465,7 +465,7 @@ universal-scraper --urls urls.txt --output-dir batch_results
 
 **🔗 Provider Support**: All 100+ models supported by LiteLLM work in CLI! See [LiteLLM Providers](https://docs.litellm.ai/docs/providers) for complete list.
 
-**📝 Development Usage** (from cloned repo):
+**Development Usage** (from cloned repo):
 ```bash
 python main.py https://example.com/jobs --api-key YOUR_KEY --model gpt-4
 ```
@@ -651,7 +651,7 @@ scraper.set_fields([
 ])
 ```
 
-## 🤖 Multi-Provider AI Support
+## Multi-Provider AI Support
 
 Universal Scraper now supports multiple AI providers through LiteLLM integration:
 
@@ -686,7 +686,7 @@ scraper = UniversalScraper(api_key="your_api_key", model_name="llama-2-70b-chat"
 
 ### Model Configuration Guide
 
-**📋 Quick Reference for Popular Models:**
+**Quick Reference for Popular Models:**
 ```python
 # Gemini Models
 model_name="gemini-2.5-flash"        # Fast, efficient
