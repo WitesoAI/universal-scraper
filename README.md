@@ -425,8 +425,6 @@ results = scraper.scrape_multiple_urls(urls, save_to_files=True, format='csv')
 
 ### CLI Usage
 
-**🎉 NEW in v1.6.0**: Full multi-provider CLI support!
-
 ```bash
 # Gemini (default) - auto-detects from environment
 universal-scraper https://example.com/jobs --output jobs.json
