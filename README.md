@@ -203,6 +203,9 @@ Here's a real working example showing Universal Scraper in action with Gemini 2.
 - **Metadata**: Meta tags, SEO tags, and hidden elements
 - **Empty Elements**: Recursively removes empty div elements that don't contain meaningful content
 - **Noise**: Comments, unnecessary attributes, and whitespace
+- **Inline SVG Image**: Makes the page size bulky
+- **Non Essential Attributes Remover**: It Distinguishes between essential attributes (id, class, href, data-price) and non-essential ones (style, onclick, data-analytics)
+- **Whitespace & Blank Lines Remover**: It Compresses the final HTML, before sending it to LLM for analysis
 
 ### Repeating Structure Reduction
 The cleaner intelligently detects and reduces repeated HTML structures:
