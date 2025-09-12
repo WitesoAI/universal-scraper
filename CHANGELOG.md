@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.9.0 - Testing & SVG Optimization Release
+- NEW: Inline SVG image remover - removes embedded SVG images to reduce HTML size
+- TESTING: Added comprehensive test suite with 105 test cases for intensive testing
+- ENHANCEMENT: Improved code coverage and reliability
+- MAINTENANCE: Removed unused dependencies for cleaner codebase
+- CI/CD: Updated GitHub workflows and removed Python 3.8 support
+
 ## v1.8.0 - Advanced HTML Optimization Release
 - 🚀 **NEW**: Non-essential attributes removal - removes styling, tracking, and testing attributes while preserving data extraction capabilities
 - 🧹 **NEW**: Whitespace compression between consecutive HTML tags - removes unnecessary whitespace and newlines between tags
