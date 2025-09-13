@@ -2,7 +2,7 @@ import logging
 import os
 from datetime import datetime
 from urllib.parse import urlparse
-from bs4 import BeautifulSoup, Comment
+from bs4 import BeautifulSoup, Comment, NavigableString
 import re
 from collections import Counter
 from difflib import SequenceMatcher
@@ -1045,9 +1045,10 @@ class HtmlCleaner:
         5. Remove repeating structures (keep samples)
         6. Limit select tags to 2 option tags
         7. Remove empty div elements recursively
-        8. Remove non-essential HTML attributes
-        9. Remove whitespace and newlines between consecutive tags
-        10. Remove empty div elements recursively (again after compression)
+        8. Collapse long text nodes with placeholders
+        9. Remove non-essential HTML attributes
+        10. Remove whitespace and newlines between consecutive tags
+        11. Remove empty div elements recursively (again after compression)
         """
         self.logger.info("Starting HTML cleaning process...")
 
@@ -1111,38 +1112,45 @@ class HtmlCleaner:
         if save_temp:
             self._save_cleaned_html(url, step7_html, "07_removed_empty_divs")
 
-        # Step 8: Remove non-essential HTML attributes
-        soup = self.remove_non_essential_attributes(soup)
+        # Step 8: Collapse long text nodes
+        soup = self.collapse_long_text_nodes(soup)
         step8_html = str(soup)
+        self.logger.info(f"Collapsed long text nodes. Length: {len(step8_html)}")
+        if save_temp:
+            self._save_cleaned_html(url, step8_html, "08_collapsed_text")
+
+        # Step 9: Remove non-essential HTML attributes
+        soup = self.remove_non_essential_attributes(soup)
+        step9_html = str(soup)
         self.logger.info(
-            f"Removed non-essential attributes. Length: {len(step8_html)}"
+            f"Removed non-essential attributes. Length: {len(step9_html)}"
         )
         if save_temp:
-            self._save_cleaned_html(url, step8_html, "08_removed_attributes")
+            self._save_cleaned_html(url, step9_html, "09_removed_attributes")
 
-        # Step 9: Remove whitespace between consecutive tags
-        step9_html = self.remove_whitespace_between_tags(step8_html)
+        # Step 10: Remove whitespace between consecutive tags
+        step10_html = self.remove_whitespace_between_tags(step9_html)
         if save_temp:
-            self._save_cleaned_html(url, step9_html, "09_removed_whitespace")
+            self._save_cleaned_html(url, step10_html, "10_removed_whitespace")
 
-        # Step 10: Remove empty divs again after compression
+        # Step 11: Remove empty divs again after compression
         # (whitespace removal might create new empty divs)
-        soup = BeautifulSoup(step9_html, "html.parser")
+        soup = BeautifulSoup(step10_html, "html.parser")
         soup = self.remove_empty_divs_recursive(soup)
-        step10_html = str(soup)
+        step11_html = str(soup)
         self.logger.info(
             f"Removed empty divs (post-compression). "
-            f"Length: {len(step10_html)}"
+            f"Length: {len(step11_html)}"
         )
         if save_temp:
             self._save_cleaned_html(
-                url, step10_html, "10_removed_empty_divs_post_compression"
+                url, step11_html, "11_removed_empty_divs_post_compression"
             )
 
-        final_html = step10_html
+        final_html = step11_html
         final_length = len(final_html)
         if save_temp:
-            self._save_cleaned_html(url, final_html, "11_final_cleaned")
+            self._save_cleaned_html(url, final_html, "12_final_cleaned")
 
         self.logger.info(
             f"HTML cleaning completed. "
@@ -1154,3 +1162,54 @@ class HtmlCleaner:
         self.logger.info(f"Reduction: {reduction_percent:.1f}%")
 
         return final_html
+
+    def collapse_text(self, text):
+        """
+        Collapse long text nodes - Replace lengthy text with short placeholders like "..."
+
+        Args:
+            text (str): The text to potentially collapse
+
+        Returns:
+            str: The original text if short, or collapsed version with placeholders
+        """
+        text = text.strip()
+        if len(text) <= 30:
+            return text  # Keep short text intact
+        elif len(text) <= 100:
+            return text[:50] + "..."  # Medium text - keep first 50 chars
+        else:
+            return text[:30] + "..." + text[-20:]  # Long text - keep start + end
+
+    def collapse_long_text_nodes(self, soup):
+        """
+        Apply text collapsing to all text nodes in the HTML document
+
+        Args:
+            soup: BeautifulSoup object
+
+        Returns:
+            BeautifulSoup object with collapsed text nodes
+        """
+        collapsed_count = 0
+
+        # Get all text nodes that are direct content (not attributes)
+        text_nodes = soup.find_all(string=True)
+
+        for text_node in text_nodes:
+            if isinstance(text_node, NavigableString):
+                original_text = str(text_node)
+                # Skip if text is too short or mostly whitespace
+                if len(original_text.strip()) <= 30:
+                    continue
+
+                # Collapse the text
+                collapsed_text = self.collapse_text(original_text)
+
+                # Replace if text was actually collapsed
+                if collapsed_text != original_text:
+                    text_node.replace_with(collapsed_text)
+                    collapsed_count += 1
+
+        self.logger.info(f"Collapsed {collapsed_count} long text nodes")
+        return soup
