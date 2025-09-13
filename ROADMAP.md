@@ -2,6 +2,8 @@
 
 This document outlines the planned features and improvements for Universal Scraper.
 
+## Save Token (High Priority)
+
 ## Improve Reliability
 
 - [ ] ⁠Retry Mechanism to re-generate the bs4 code till it is able to generate correct extraction code (beautifulsoup4 code)
