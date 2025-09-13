@@ -56,15 +56,19 @@ graph TB
     
     C --> C1[Remove Scripts & Styles]
     C1 --> C2[Remove Ads & Analytics]
-    C2 --> C3[Remove Navigation Elements]
+    C2 --> C2a[Remove Inline SVG Images]
+    C2a --> C2b[Remove Non-Essential HTML Attributes]
+    C2b --> C3[Remove Navigation Elements]
     C3 --> C4[Detect Repeating Structures]
     C4 --> C5[Keep 2 Samples, Remove Others]
     C5 --> C6[Remove Empty Divs]
     C6 --> D[📊 98% Size Reduction]
     
-    D --> E{🔍 Check Code Cache}
-    E -->|Cache Hit| F[♻️ Use Cached Code]
-    E -->|Cache Miss| G[🤖 AI Code Generation]
+    D --> D1[🔗 Generate Structural Hash]
+    D1 --> E{🔍 Check Code Cache}
+    E -->|Cache Hit & Hash Match| F[♻️ Use Cached Code]
+    E -->|Cache Miss or Hash Changed| E1[🗑️ Discard Old Cache]
+    E1 --> G[🤖 AI Code Generation]
     
     G --> G1[🧠 Choose AI Provider]
     G1 --> G2[Gemini 2.5-Flash Default]
@@ -77,7 +81,7 @@ graph TB
     G4 --> H
     G5 --> H
     
-    H --> I[💾 Cache Generated Code]
+    H --> I[💾 Cache Generated Code + Hash]
     F --> J[⚡ Execute Code on Original HTML]
     I --> J
     
@@ -91,7 +95,9 @@ graph TB
     
     style A fill:#e1f5fe
     style D fill:#4caf50,color:#fff
+    style D1 fill:#ff5722,color:#fff
     style E fill:#ff9800,color:#fff
+    style E1 fill:#f44336,color:#fff
     style F fill:#4caf50,color:#fff
     style G1 fill:#9c27b0,color:#fff
     style O fill:#2196f3,color:#fff
