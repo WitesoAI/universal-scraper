@@ -315,6 +315,22 @@ class HtmlCleaner:
 
         return soup
 
+    def remove_iframes(self, soup):
+        """
+        Remove iframe elements to reduce HTML size and eliminate embedded content.
+        Iframes often contain ads, tracking pixels, or external content that doesn't
+        contribute to data extraction.
+        """
+        iframe_count = 0
+        for iframe_element in soup.find_all("iframe"):
+            iframe_element.decompose()
+            iframe_count += 1
+
+        if iframe_count > 0:
+            self.logger.info(f"Removed {iframe_count} iframe elements.")
+
+        return soup
+
     def remove_header_footer(self, soup):
         """Remove header and footer elements"""
         # Remove by semantic tags
@@ -1040,15 +1056,16 @@ class HtmlCleaner:
         Main method to clean HTML content:
         1. Remove noise (scripts, styles, comments)
         2. Remove inline SVG images and image elements
-        3. Remove headers and footers
-        4. Focus on main content
-        5. Remove repeating structures (keep samples)
+        3. Remove iframe elements
+        4. Remove headers and footers
+        5. Focus on main content
         6. Limit select tags to 2 option tags
         7. Remove empty div elements recursively
         8. Collapse long text nodes with placeholders
         9. Remove non-essential HTML attributes
         10. Remove whitespace and newlines between consecutive tags
-        11. Remove empty div elements recursively (again after compression)
+        11. Remove repeating structures (keep samples)
+        12. Remove empty div elements recursively (again after compression)
         """
         self.logger.info("Starting HTML cleaning process...")
 
@@ -1069,32 +1086,28 @@ class HtmlCleaner:
         if save_temp:
             self._save_cleaned_html(url, step2_html, "02_removed_svg_images")
 
-        # Step 3: Remove headers and footers
-        soup = self.remove_header_footer(soup)
+        # Step 3: Remove iframe elements
+        soup = self.remove_iframes(soup)
         step3_html = str(soup)
-        self.logger.info(f"Removed headers/footers. Length: {len(step3_html)}")
+        self.logger.info(f"Removed iframes. Length: {len(step3_html)}")
         if save_temp:
-            self._save_cleaned_html(
-                url, step3_html, "03_removed_header_footer"
-            )
+            self._save_cleaned_html(url, step3_html, "03_removed_iframes")
 
-        # Step 4: Focus on main content
-        soup = self.focus_on_main_content(soup)
+        # Step 4: Remove headers and footers
+        soup = self.remove_header_footer(soup)
         step4_html = str(soup)
-        self.logger.info(f"Focused on main content. Length: {len(step4_html)}")
-        if save_temp:
-            self._save_cleaned_html(url, step4_html, "04_main_content")
-
-        # Step 5: Remove repeating structures (keep samples)
-        soup = self.remove_repeating_structures(soup, min_keep=2, min_total=3)
-        step5_html = str(soup)
-        self.logger.info(
-            f"Removed repeating structures. Length: {len(step5_html)}"
-        )
+        self.logger.info(f"Removed headers/footers. Length: {len(step4_html)}")
         if save_temp:
             self._save_cleaned_html(
-                url, step5_html, "05_removed_repeating_structures"
+                url, step4_html, "04_removed_header_footer"
             )
+
+        # Step 5: Focus on main content
+        soup = self.focus_on_main_content(soup)
+        step5_html = str(soup)
+        self.logger.info(f"Focused on main content. Length: {len(step5_html)}")
+        if save_temp:
+            self._save_cleaned_html(url, step5_html, "05_main_content")
 
         # Step 6: Limit select options to 2
         soup = self.limit_select_options(soup, max_options=2)
@@ -1133,24 +1146,35 @@ class HtmlCleaner:
         if save_temp:
             self._save_cleaned_html(url, step10_html, "10_removed_whitespace")
 
-        # Step 11: Remove empty divs again after compression
-        # (whitespace removal might create new empty divs)
+        # Step 11: Remove repeating structures (keep samples)
         soup = BeautifulSoup(step10_html, "html.parser")
-        soup = self.remove_empty_divs_recursive(soup)
+        soup = self.remove_repeating_structures(soup, min_keep=2, min_total=3)
         step11_html = str(soup)
         self.logger.info(
-            f"Removed empty divs (post-compression). "
-            f"Length: {len(step11_html)}"
+            f"Removed repeating structures. Length: {len(step11_html)}"
         )
         if save_temp:
             self._save_cleaned_html(
-                url, step11_html, "11_removed_empty_divs_post_compression"
+                url, step11_html, "11_removed_repeating_structures"
             )
 
-        final_html = step11_html
+        # Step 12: Remove empty divs again after compression
+        # (whitespace removal might create new empty divs)
+        soup = self.remove_empty_divs_recursive(soup)
+        step12_html = str(soup)
+        self.logger.info(
+            f"Removed empty divs (post-compression). "
+            f"Length: {len(step12_html)}"
+        )
+        if save_temp:
+            self._save_cleaned_html(
+                url, step12_html, "12_removed_empty_divs_post_compression"
+            )
+
+        final_html = step12_html
         final_length = len(final_html)
         if save_temp:
-            self._save_cleaned_html(url, final_html, "12_final_cleaned")
+            self._save_cleaned_html(url, final_html, "13_final_cleaned")
 
         self.logger.info(
             f"HTML cleaning completed. "
