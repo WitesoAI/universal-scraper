@@ -24,7 +24,7 @@ except FileNotFoundError:
 
 setup(
     name="universal-scraper",
-    version="1.9.0",
+    version="1.9.1",
     author="Witeso",
     author_email="support@witeso.com",
     description=(
