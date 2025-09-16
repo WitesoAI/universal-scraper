@@ -104,13 +104,13 @@ graph TB
 ```
 
 **Key Performance Benefits:**
-- 🚀 **98% HTML Size Reduction** → Massive token savings
-- ⚡ **Smart Caching** → 90%+ API cost reduction on repeat scraping  
-- 🤖 **Multi-Provider Support** → Choose the best AI for your use case, 100+ LLMs supported
-- 🔄 **Dual HTML Processing** → Clean HTML and reduces HTML size upto 98.3%+ for AI analysis, original HTML for complete data extraction
-- 🔄 **Generates BeautifulSoup4 code on the fly** → Generates structural hash of HTML page, so that it reuse extraction code on repeat scraping
+- **98% HTML Size Reduction** → Massive token savings
+- **Smart Caching** → 90%+ API cost reduction on repeat scraping  
+- **Multi-Provider Support** → Choose the best AI for your use case, 100+ LLMs supported
+- **Dual HTML Processing** → Clean HTML and reduces HTML size upto 98.3%+ for AI analysis, original HTML for complete data extraction
+- **Generates BeautifulSoup4 code on the fly** → Generates structural hash of HTML page, so that it reuse extraction code on repeat scraping
 
-**🔥 Token Count Comparison (Claude Sonnet 4):**
+**Token Count Comparison (Claude Sonnet 4):**
 
 - 2,619 tokens: ~$0.00786 (0.8 cents)
 - 150,742 tokens: ~$0.45 (45 cents)
@@ -172,7 +172,7 @@ Here's a real working example showing Universal Scraper in action with Gemini 2.
 # 💾 Data automatically saved as CSV with product_name, product_price, product_rating, etc.
 ```
 
-**🔥 What Just Happened:**
+**What Just Happened:**
 1. **Fields Configured** for e-commerce: product_name, product_price, product_rating, etc.
 2. **HTML Fetched** with anti-bot protection (163KB)
 3. **Smart Cleaning** reduced size by 98.3% (163KB → 2.6KB)
@@ -192,15 +192,15 @@ Here's a real working example showing Universal Scraper in action with Gemini 2.
 
 ## Features
 
-- 🤖 **Multi-Provider AI Support**: Uses Google Gemini by default, with support for OpenAI, Anthropic, and 100+ other models via LiteLLM
-- 🎯 **Customizable Fields**: Define exactly which fields you want to extract (e.g., company name, job title, salary)
-- 🚀 **Smart Caching**: Automatically caches extraction code based on HTML structure - saves 90%+ API tokens on repeat scraping
-- 🧹 **Smart HTML Cleaner**: Removes noise and reduces HTML by 98%+ - significantly cuts token usage for AI processing
-- 🔧 **Easy to Use**: Simple API for both quick scraping and advanced use cases
-- 📦 **Modular Design**: Built with clean, modular components
-- 🛡️ **Robust**: Handles edge cases, missing data, and various HTML structures
-- 💾 **Multiple Output Formats**: Support for both JSON (default) and CSV export formats
-- 📊 **Structured Output**: Always returns consistent, clean & structured data output with comprehensive metadata
+- **Multi-Provider AI Support**: Uses Google Gemini by default, with support for OpenAI, Anthropic, and 100+ other models via LiteLLM
+- **Customizable Fields**: Define exactly which fields you want to extract (e.g., company name, job title, salary)
+- **Smart Caching**: Automatically caches extraction code based on HTML structure - saves 90%+ API tokens on repeat scraping
+- **Smart HTML Cleaner**: Removes noise and reduces HTML by 98%+ - significantly cuts token usage for AI processing
+- **Easy to Use**: Simple API for both quick scraping and advanced use cases
+- **Modular Design**: Built with clean, modular components
+- **Robust**: Handles edge cases, missing data, and various HTML structures
+- **Multiple Output Formats**: Support for both JSON (default) and CSV export formats
+- **Structured Output**: Always returns consistent, clean & structured data output with comprehensive metadata
 
 ## Smart HTML Cleaner
 
@@ -667,7 +667,7 @@ Universal Scraper now supports multiple AI providers through LiteLLM integration
 - **Anthropic**: `claude-3-opus-20240229`, `claude-3-sonnet-20240229`, `claude-3-haiku-20240307`
 - **100+ Other Models**: Via LiteLLM including Llama, PaLM, Cohere, and more
 
-**📚 For complete model names and provider setup**: See [LiteLLM Providers Documentation](https://docs.litellm.ai/docs/providers)
+**For complete model names and provider setup**: See [LiteLLM Providers Documentation](https://docs.litellm.ai/docs/providers)
 
 ### Usage Examples
 
