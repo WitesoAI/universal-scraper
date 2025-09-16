@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.9.2 - URL Optimization & Refactoring Release
+- **NEW**: URL placeholder replacement - replaces long URLs (src, href, action) with short placeholders like `[IMG_URL]`, `[LINK_URL]` to reduce token count
+- **REFACTOR**: Complete HTML cleaner modularization - split monolithic 1240+ line file into 8 focused components
+- **ARCHITECTURE**: New modular structure with `universal_scraper/core/cleaning/` package containing specialized modules:
+  - `base_cleaner.py` - Common utilities and configuration
+  - `noise_remover.py` - Scripts, styles, comments, SVG, iframe removal
+  - `url_replacer.py` - **NEW: URL placeholder replacement functionality**
+  - `structure_cleaner.py` - Headers/footers removal and main content focus
+  - `content_optimizer.py` - Text collapsing, empty divs, whitespace optimization
+  - `duplicate_finder.py` - Repeating structures detection and removal
+  - `attribute_cleaner.py` - Non-essential attributes removal
+  - `html_cleaner.py` - Main orchestrator coordinating all cleaning steps
+- **PERFORMANCE**: URL replacement provides additional token savings on URL-heavy pages
+- **MAINTAINABILITY**: Each module now has single responsibility (~150-300 lines vs 1240+ monolith)
+- **TESTABILITY**: Modular components can be tested and modified independently
+- **DOCS**: Updated README with URL replacement step in mermaid diagram and feature description
+- **COMPATIBILITY**: Full backward compatibility maintained - existing imports continue to work
+- **SMART**: Intelligent URL placeholder selection based on element type (IMG_URL, LINK_URL, FORM_URL, etc.)
+- **LOGGING**: Added URL replacement statistics and improved cleaning pipeline logging
+
+## v1.9.1 - Patch Release
+- 🐛 **FIX**: Minor bug fixes and improvements
+
 ## v1.9.0 - Testing & SVG Optimization Release
 - NEW: Inline SVG image remover - removes embedded SVG images to reduce HTML size
 - TESTING: Added comprehensive test suite with 105 test cases for intensive testing
