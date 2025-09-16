@@ -4,6 +4,8 @@ This document outlines the planned features and improvements for Universal Scrap
 
 ## Save Token (High Priority)
 
+Test this module against multiple different sites, and for those sites where the reduction percentage is not that great, check the final cleaned html, which is present inside the temp folder, and try implementing a universal cleaner function to reduce the HTML size
+
 ## Improve Reliability
 
 - [ ] ⁠Retry Mechanism to re-generate the bs4 code till it is able to generate correct extraction code (beautifulsoup4 code)
