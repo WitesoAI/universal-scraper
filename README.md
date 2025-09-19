@@ -19,7 +19,6 @@
 - [How Universal Scraper Works](#how-universal-scraper-works)
 - [Live Working Example](#live-working-example)
 - [How It Works](#how-it-works)
-- [Features](#features)
 - [Smart HTML Cleaner](#smart-html-cleaner)
 - [Installation (Recommended)](#installation-recommended)
 - [Installation](#installation)
@@ -197,19 +196,7 @@ Here's a real working example showing Universal Scraper in action with Gemini 2.
 3. **Structure-Based Caching**: Creates structural hash and checks cache for existing extraction code
 4. **AI Code Generation**: Uses your chosen AI provider (Gemini, OpenAI, Claude, etc.) to generate custom BeautifulSoup code on cleaned HTML (only when not cached)
 5. **Code Execution**: Runs the cached/generated code on original HTML to extract ALL data items
-6. **Export Output data as Json/CSV**: Returns complete, structured data with metadata and performance stats
-
-## Features
-
-- **Multi-Provider AI Support**: Uses Google Gemini by default, with support for OpenAI, Anthropic, and 100+ other models via LiteLLM
-- **Customizable Fields**: Define exactly which fields you want to extract (e.g., company name, job title, salary)
-- **Smart Caching**: Automatically caches extraction code based on HTML structure - saves 90%+ API tokens on repeat scraping
-- **Smart HTML Cleaner**: Removes noise and reduces HTML by 98%+ - significantly cuts token usage for AI processing
-- **Easy to Use**: Simple API for both quick scraping and advanced use cases
-- **Modular Design**: Built with clean, modular components
-- **Robust**: Handles edge cases, missing data, and various HTML structures
-- **Multiple Output Formats**: Support for both JSON (default) and CSV export formats
-- **Structured Output**: Always returns consistent, clean & structured data output with comprehensive metadata
+6. **Export Output data as Json/CSV**: Returns complete, consistent, structured data with metadata and performance stats
 
 ## Smart HTML Cleaner
 
