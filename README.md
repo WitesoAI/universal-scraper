@@ -45,6 +45,16 @@
 
 A Python module for AI-powered web scraping with customizable field extraction using multiple AI providers (Gemini, OpenAI, Anthropic, and more via LiteLLM).
 
+## Motivation for This Module
+
+- Traditionally, Developers have to write the Web Scraper manually using technologies such as `requests/cloudscraper/selenium` (in `Python`) or `Axios/Cheerio/Puppeteer/selenium` (in `JS`)
+- We need to write BeautifulSoup4 selectors using xpath/class/id etc, by analysing the HTML
+- Even slight change in HTML structure breaks the scrapers, this fragility means scrapers require constant, time-consuming maintenance and frequent rewrites to remain functional
+- Writing end to end web scrapers from fetching HTML to Parsing it and then exporting that data in JSON or CSV is time consuming
+- How about a module, which can write BeautifulSoup4 code on the fly by Analysing 98%+ less sized HTML strucutre, then use that extraction code for subsequent pages with same HTML structure
+- A module which only regenerates the Beautifulsoup4 code, only if the HTML structure is changed
+- A module which can do couple of hours of web scraping task in just 5 seconds and still `costing less than 0.7 cents` (~$0.00786) on LLM Call (`for generating Extraction code only`)
+
 ## How Universal Scraper Works
 
 ```mermaid
