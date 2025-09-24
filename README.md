@@ -36,7 +36,7 @@
 - [Multi-Provider AI Support](#multi-provider-ai-support)
 - [Troubleshooting](#troubleshooting)
 - [Roadmap](#roadmap)
-- [Core Contributors](#core-contributors)
+- [Contributors](#contributors)
 - [Contributing](#contributing)
 - [License](#license)
 - [Changelog](#changelog)
