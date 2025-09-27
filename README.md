@@ -492,7 +492,7 @@ Universal Scraper works as an MCP (Model Context Protocol) server, allowing AI a
 
 1. **Install with MCP support:**
 ```bash
-pip install universal-scraper[mcp]
+pip install universal-scraper
 ```
 
 2. **Set your AI API key:**
