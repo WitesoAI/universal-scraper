@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.9.3 - MCP Server Integration Release
+- **NEW**: Model Context Protocol (MCP) server implementation
+- **ARCHITECTURE**: Complete MCP server infrastructure with async stdio transport
+- **INTEGRATION**: Native Claude Code and MCP-compatible AI client support
+- **TOOLS**: MCP tool interface for scrape_url, scrape_multiple_urls, configure_scraper operations
+- **DEPLOYMENT**: Standalone MCP server entry point with console script integration
+- **VALIDATION**: Input validation and error handling for MCP tool calls
+- **DOCS**: Claude Code integration documentation and setup guides
+
 ## v1.9.2 - URL Optimization & Refactoring Release
 - **NEW**: URL placeholder replacement - replaces long URLs (src, href, action) with short placeholders like `[IMG_URL]`, `[LINK_URL]` to reduce token count
 - **REFACTOR**: Complete HTML cleaner modularization - split monolithic 1240+ line file into 8 focused components

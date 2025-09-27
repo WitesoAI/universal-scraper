@@ -24,4 +24,4 @@ e.g.
 
 result = scraper.scrape_url("https://example.com/jobs?page=DYNAMIC", min_limit=1, max_limit=100)
 ```
-- [ ] Giving Agent a functionality to scrap any website using this module: Add MCP (Model Context Protocal) in CLI to run a SSE (Server Side Event) API, which can be integrated in any Agent such as Claude Code, Cursor, etc
+- [ ] Multi Agent System by which it can Plan & Execute any kind of Browser Automation by integrating it with ADK (Agent Development Kit)
