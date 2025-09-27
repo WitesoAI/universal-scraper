@@ -5,6 +5,16 @@ Setup script for Universal Scraper package
 from setuptools import setup, find_packages
 import os
 
+# Get version from the package
+def get_version():
+    """Get version from universal_scraper/__init__.py"""
+    version_file = os.path.join(os.path.dirname(__file__), 'universal_scraper', '__init__.py')
+    with open(version_file, 'r') as f:
+        for line in f:
+            if line.startswith('__version__'):
+                return line.split('=')[1].strip().strip('"').strip("'")
+    raise RuntimeError('Unable to find version string.')
+
 # Read the contents of README file
 this_directory = os.path.abspath(os.path.dirname(__file__))
 try:
@@ -24,7 +34,7 @@ except FileNotFoundError:
 
 setup(
     name="universal-scraper",
-    version="1.9.2",
+    version=get_version(),
     author="Witeso",
     author_email="support@witeso.com",
     description=(
@@ -70,11 +80,15 @@ setup(
             "black>=22.0.0",
             "flake8>=5.0.0",
             "mypy>=1.0.0",
+        ],
+        "mcp": [
+            "mcp>=1.0.0",
         ]
     },
     entry_points={
         "console_scripts": [
             "universal-scraper=main:main",
+            "universal-scraper-mcp=universal_scraper.mcp_server:main_sync",
         ],
     },
     keywords=[
@@ -94,6 +108,8 @@ setup(
         "caching",
         "performance",
         "multi-provider",
+        "mcp",
+        "model context protocol",
     ],
     project_urls={
         "Bug Reports": "https://github.com/WitesoAI/universal-scraper/issues",

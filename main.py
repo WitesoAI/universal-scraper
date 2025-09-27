@@ -15,6 +15,7 @@ Example:
 """
 
 import argparse
+import asyncio
 import logging
 import os
 import sys
@@ -58,7 +59,7 @@ def generate_output_filename(url, format_type="json"):
 def scrape_multiple_urls(urls_file, scraper, output_dir, format_type="json"):
     """Scrape multiple URLs from a file"""
     if not os.path.exists(urls_file):
-        print(f"❌ URLs file not found: {urls_file}")
+        print(f"Error: URLs file not found: {urls_file}")
         return False
 
     with open(urls_file, "r") as f:
@@ -69,10 +70,10 @@ def scrape_multiple_urls(urls_file, scraper, output_dir, format_type="json"):
         ]
 
     if not urls:
-        print(f"❌ No valid URLs found in {urls_file}")
+        print(f"Error: No valid URLs found in {urls_file}")
         return False
 
-    print(f"📋 Found {len(urls)} URLs to scrape")
+    print(f"Found {len(urls)} URLs to scrape")
 
     # Ensure output directory exists
     os.makedirs(output_dir, exist_ok=True)
@@ -84,13 +85,13 @@ def scrape_multiple_urls(urls_file, scraper, output_dir, format_type="json"):
     successful = sum(1 for r in results if not r.get("error"))
     failed = len(results) - successful
 
-    print("\n📊 Batch scraping completed:")
-    print(f"✅ Successful: {successful}")
-    print(f"❌ Failed: {failed}")
-    print("📁 Results saved to: output directory")
+    print("\nBatch scraping completed:")
+    print(f"Successful: {successful}")
+    print(f"Failed: {failed}")
+    print("Results saved to: output directory")
 
     if failed > 0:
-        print("\n❌ Failed URLs:")
+        print("\nFailed URLs:")
         for result in results:
             if result.get("error"):
                 print(
@@ -100,6 +101,19 @@ def scrape_multiple_urls(urls_file, scraper, output_dir, format_type="json"):
         return False
 
     return True
+
+
+async def run_mcp_server():
+    """Run the MCP server"""
+    try:
+        from universal_scraper.mcp_server import main as mcp_main
+        await mcp_main()
+    except ImportError:
+        print("Error: MCP dependencies not installed. Install with: pip install mcp")
+        sys.exit(1)
+    except Exception as e:
+        print(f"Error: MCP server error: {e}")
+        sys.exit(1)
 
 
 def main():
@@ -128,11 +142,15 @@ Multi-Provider Support:
         """,
     )
 
-    # URL input options
-    url_group = parser.add_mutually_exclusive_group(required=True)
-    url_group.add_argument("url", nargs="?", help="URL to scrape")
-    url_group.add_argument(
+    # Mode selection
+    mode_group = parser.add_mutually_exclusive_group(required=True)
+    mode_group.add_argument("url", nargs="?", help="URL to scrape")
+    mode_group.add_argument(
         "--urls", help="File containing URLs to scrape (one per line)"
+    )
+    mode_group.add_argument(
+        "--mcp-server", action="store_true",
+        help="Run as MCP (Model Context Protocol) server"
     )
 
     # Output options
@@ -209,6 +227,13 @@ Multi-Provider Support:
 
     setup_logging(log_level)
 
+    # Handle MCP server mode
+    if args.mcp_server:
+        print("Starting Universal Scraper MCP Server...")
+        print("Server ready to receive MCP requests via stdio")
+        asyncio.run(run_mcp_server())
+        return
+
     try:
         # Determine API key (legacy support)
         api_key = args.api_key or args.gemini_key
@@ -225,16 +250,16 @@ Multi-Provider Support:
         # Set custom fields if provided
         if args.fields:
             scraper.set_fields(args.fields)
-            print(f"🎯 Custom fields set: {args.fields}")
+            print(f"Custom fields set: {args.fields}")
 
         # Show current configuration
-        print(f"🤖 Using AI model: {scraper.get_model_name()}")
-        print(f"📋 Extraction fields: {scraper.get_fields()}")
+        print(f"Using AI model: {scraper.get_model_name()}")
+        print(f"Extraction fields: {scraper.get_fields()}")
 
         if args.url:
             # Single URL scraping
             if not validate_url(args.url):
-                print(f"❌ Invalid URL format: {args.url}")
+                print(f"Error: Invalid URL format: {args.url}")
                 sys.exit(1)
 
             # Generate filename if not provided
@@ -242,8 +267,8 @@ Multi-Provider Support:
                 args.url, args.format
             )
 
-            print(f"🌐 Scraping URL: {args.url}")
-            print(f"📁 Output format: {args.format.upper()}")
+            print(f"Scraping URL: {args.url}")
+            print(f"Output format: {args.format.upper()}")
 
             result = scraper.scrape_url(
                 url=args.url,
@@ -253,60 +278,60 @@ Multi-Provider Support:
             )
 
             if not result.get("error"):
-                print("\n✅ Scraping completed successfully!")
+                print("\nScraping completed successfully!")
                 print(
-                    f"📄 Data saved to: "
+                    f"Data saved to: "
                     f"{result.get('saved_to', output_filename)}"
                 )
                 print(
-                    f"📊 Items extracted: "
+                    f"Items extracted: "
                     f"{result['metadata']['items_extracted']}"
                 )
                 size_reduction = (
                     len(result['metadata']) -
                     result['metadata']['cleaned_html_length']
                 )
-                print(f"🗜️ HTML size reduction: {size_reduction}")
+                print(f"HTML size reduction: {size_reduction}")
 
                 # Save cleaned HTML if requested
                 if args.save_html:
                     # This would require modifying scraper to return
                     # cleaned HTML
                     print(
-                        f"💾 Cleaned HTML would be saved to: "
+                        f"Cleaned HTML would be saved to: "
                         f"{args.save_html}"
                     )
 
                 sys.exit(0)
             else:
                 print(
-                    f"\n❌ Scraping failed: "
+                    f"\nError: Scraping failed: "
                     f"{result.get('error', 'Unknown error')}"
                 )
                 sys.exit(1)
 
         elif args.urls:
             # Multiple URLs scraping
-            print("📋 Batch scraping mode")
-            print(f"📁 Output directory: {args.output_dir}")
-            print(f"📄 Output format: {args.format.upper()}")
+            print("Batch scraping mode")
+            print(f"Output directory: {args.output_dir}")
+            print(f"Output format: {args.format.upper()}")
 
             success = scrape_multiple_urls(
                 args.urls, scraper, args.output_dir, args.format
             )
 
             if success:
-                print("\n✅ Batch scraping completed successfully!")
+                print("\nBatch scraping completed successfully!")
                 sys.exit(0)
             else:
-                print("\n❌ Batch scraping completed with errors!")
+                print("\nError: Batch scraping completed with errors!")
                 sys.exit(1)
 
     except KeyboardInterrupt:
-        print("\n🛑 Scraping interrupted by user")
+        print("\nScraping interrupted by user")
         sys.exit(1)
     except Exception as e:
-        print(f"❌ Fatal error: {str(e)}")
+        print(f"Fatal error: {str(e)}")
         if args.verbose:
             import traceback
 

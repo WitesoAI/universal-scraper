@@ -28,6 +28,7 @@
   - [3. Convenience Function](#3-convenience-function)
 - [Export Formats](#export-formats)
 - [CLI Usage](#cli-usage)
+- [MCP Server Usage](#mcp-server-usage)
 - [Cache Management](#cache-management)
 - [Advanced Usage](#advanced-usage)
 - [API Reference](#api-reference)
@@ -482,6 +483,74 @@ universal-scraper --urls urls.txt --output-dir batch_results
 ```bash
 python main.py https://example.com/jobs --api-key YOUR_KEY --model gpt-4
 ```
+
+## MCP Server Usage
+
+Universal Scraper works as an MCP (Model Context Protocol) server, allowing AI assistants to scrape websites directly.
+
+### Quick Setup
+
+1. **Install with MCP support:**
+```bash
+pip install universal-scraper[mcp]
+```
+
+2. **Set your AI API key:**
+```bash
+export GEMINI_API_KEY="your_key"  # or OPENAI_API_KEY, ANTHROPIC_API_KEY
+```
+
+### Claude Code Setup
+
+Add this to your Claude Code MCP settings:
+
+```json
+{
+  "mcpServers": {
+    "universal-scraper": {
+      "command": "universal-scraper-mcp"
+    }
+  }
+}
+```
+
+or Run this command in your terminal
+
+```
+claude mcp add universal-scraper universal-scraper-mcp
+```
+
+![](docs/claude_code_integration.png)
+
+### Cursor Setup
+
+Add this to your Cursor MCP configuration:
+
+```json
+{
+  "mcpServers": {
+    "universal-scraper": {
+      "command": "universal-scraper-mcp"
+    }
+  }
+}
+```
+
+### Available Tools
+
+- **scrape_url**: Scrape a single URL
+- **scrape_multiple_urls**: Scrape multiple URLs
+- **configure_scraper**: Set API keys and models
+- **get_scraper_info**: Check current settings
+- **clear_cache**: Clear cached data
+
+### Example Usage
+
+Once configured, just ask your AI assistant:
+
+> "Scrape https://news.ycombinator.com and extract the top story titles and links"
+
+> "Scrape this product page and get the price, name, and reviews"
 
 ## Cache Management
 ```python
