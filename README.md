@@ -247,6 +247,13 @@ The cleaner intelligently removes empty div elements:
 pip install universal-scraper
 ```
 
+## Installation (Global level on Mac)
+
+```
+brew install pipx
+pipx install universal-scraper
+```
+
 ## Installation
 
 1. **Clone the repository**:
