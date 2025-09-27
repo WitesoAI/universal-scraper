@@ -251,7 +251,7 @@ pip install universal-scraper
 
 ```
 brew install pipx
-pipx install universal-scraper
+sudo pipx install universal-scraper --global
 ```
 
 ## Installation
